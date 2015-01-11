@@ -1,6 +1,6 @@
 # WiseInterceptors
 
-This project make use of AutoFac and Castle Dynamic Proxy to implement various pattern Aspect Oriented Programming.
+This project make use of AutoFac and Castle Dynamic Proxy to implement various Aspect Oriented Programming patterns.
 
 I started with the Circuit Breaker pattern.
 

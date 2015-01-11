@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiseInterceptor", "WiseInterceptor\WiseInterceptor.csproj", "{441F6CCE-6A15-4DCA-8224-5E6C10975E7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WiseInterceptors.Test", "WiseInterceptors.Test\WiseInterceptors.Test.csproj", "{63FD354D-FF33-4EB6-9439-90BE1886B7F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{441F6CCE-6A15-4DCA-8224-5E6C10975E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{441F6CCE-6A15-4DCA-8224-5E6C10975E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{441F6CCE-6A15-4DCA-8224-5E6C10975E7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63FD354D-FF33-4EB6-9439-90BE1886B7F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63FD354D-FF33-4EB6-9439-90BE1886B7F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63FD354D-FF33-4EB6-9439-90BE1886B7F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63FD354D-FF33-4EB6-9439-90BE1886B7F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

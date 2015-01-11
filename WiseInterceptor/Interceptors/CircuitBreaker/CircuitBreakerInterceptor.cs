@@ -22,7 +22,6 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
             var settings = GetMethodSettings(invocation);
             if (settings != null)
             {
-
                 var circuitBreaker = GetCurrentCircuitBreaker(invocation);
                 try
                 {

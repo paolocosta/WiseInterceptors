@@ -15,15 +15,7 @@ namespace DynamicProxy
     {
         static void Main(string[] args)
         {
-            var builder = new ContainerBuilder();
-
-            builder.Register(c => new CircuitBreakerInterceptor(new Cache()));
-            
-            builder.RegisterType<Breakable>()
-                .As<IBreakable>()
-            .EnableInterfaceInterceptors().InterceptedBy(typeof(CircuitBreakerInterceptor));
-
-            var container = builder.Build();
+            var container = BuildContainer();
           
             using (var scope = container.BeginLifetimeScope())
             {
@@ -33,7 +25,7 @@ namespace DynamicProxy
                     IBreakable b = scope.Resolve<IBreakable>();
                     try
                     {
-                        System.Threading.Thread.Sleep(1000);
+                        System.Threading.Thread.Sleep(100);
                         b.HopeGetSomething();
                         Console.WriteLine(string.Format("{0} OK", DateTime.Now.TimeOfDay.ToString()));
                     }
@@ -43,6 +35,21 @@ namespace DynamicProxy
                     }
                 }
             }
+        }
+
+        private static IContainer BuildContainer()
+        {
+            var builder = new ContainerBuilder();
+
+            builder.Register(c => new CircuitBreakerInterceptor(new Cache()));
+
+            builder.RegisterType<Breakable>()
+                .As<IBreakable>()
+            .EnableInterfaceInterceptors()
+            .InterceptedBy(typeof(CircuitBreakerInterceptor));
+
+            var container = builder.Build();
+            return container;
         }
     }
 }

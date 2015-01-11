@@ -10,7 +10,7 @@ namespace DynamicProxy
     public class Breakable : DynamicProxy.IBreakable
     {
 
-        [CircuitBreakerSettings(ExceptionType = typeof(Exception))]
+        [CircuitBreakerSettings(ExceptionType = typeof(Exception), RetryingPeriodInSeconds=60, BreakingPeriodInSeconds=10, ExceptionsBeforeBreak=5)]
         public virtual string HopeGetSomething()
         {
             DateTime now = DateTime.Now;

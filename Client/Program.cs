@@ -23,10 +23,7 @@ namespace DynamicProxy
                 .As<IBreakable>()
             .EnableInterfaceInterceptors().InterceptedBy(typeof(CircuitBreakerInterceptor));
 
-            
-
             var container = builder.Build();
-
           
             using (var scope = container.BeginLifetimeScope())
             {

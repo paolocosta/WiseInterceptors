@@ -36,53 +36,59 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
                 }
                 catch (Exception ex)
                 {
-                    RethrowCircuitBreakerException(ex);
+                    if (ex.GetType() == typeof(CircuitBreakerException))
+                    {
+                        throw ex;
+                    }
                     
                     if (circuitBreaker == null)
                     {
-                        if (IsSameOrSubClassAsSettings(settings, ex))
-                        {
-                            circuitBreaker = new CircuitBreaker
-                            {
-                                Configuration = settings,
-                                CreationDate = _Cache.Now(),
-                                BreakingException = ex,
-                                BreakDate = DateTime.MinValue,
-                                Retries = 0,
-                                Status = CircuitBreakerStatusEnum.Breakable
-                            };
-
-                            _Cache.Insert(GetCacheKey(invocation),
-                                circuitBreaker, _Cache.Now().AddSeconds(settings.RetryingPeriodInSeconds)
-                                );
-                        }
+                        circuitBreaker = CreateNewCircuitBreaker(invocation, settings, circuitBreaker, ex);
                     }
                     
                     circuitBreaker.Retries++;
                     
                     if (circuitBreaker.Retries >= settings.ExceptionsBeforeBreak)
                     {
-                        _Cache.Remove(GetCacheKey(invocation));
-                        circuitBreaker.Status = CircuitBreakerStatusEnum.Breaked;
-                        circuitBreaker.BreakDate = _Cache.Now();
-                        _Cache.Insert(GetCacheKey(invocation), circuitBreaker, _Cache.Now().AddYears(1));
+                        BreakCircuit(invocation, circuitBreaker);
                     }
                     throw ex;
                 }
             }
         }
 
+        private void BreakCircuit(IInvocation invocation, CircuitBreaker circuitBreaker)
+        {
+            _Cache.Remove(GetCacheKey(invocation));
+            circuitBreaker.Status = CircuitBreakerStatusEnum.Breaked;
+            circuitBreaker.BreakDate = _Cache.Now();
+            _Cache.Insert(GetCacheKey(invocation), circuitBreaker, _Cache.Now().AddYears(1));
+        }
+
+        private CircuitBreaker CreateNewCircuitBreaker(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker, Exception ex)
+        {
+            if (IsSameOrSubClassAsSettings(settings, ex))
+            {
+                circuitBreaker = new CircuitBreaker
+                {
+                    Configuration = settings,
+                    CreationDate = _Cache.Now(),
+                    BreakingException = ex,
+                    BreakDate = DateTime.MinValue,
+                    Retries = 0,
+                    Status = CircuitBreakerStatusEnum.Breakable
+                };
+
+                _Cache.Insert(GetCacheKey(invocation),
+                    circuitBreaker, _Cache.Now().AddSeconds(settings.RetryingPeriodInSeconds)
+                    );
+            }
+            return circuitBreaker;
+        }
+
         private static bool IsSameOrSubClassAsSettings(CircuitBreakerSettingsAttribute settings, Exception ex)
         {
             return ex.GetType().IsSubclassOf(settings.ExceptionType) || ex.GetType() == settings.ExceptionType;
-        }
-
-        private static void RethrowCircuitBreakerException(Exception ex)
-        {
-            if (ex.GetType() == typeof(CircuitBreakerException))
-            {
-                throw ex;
-            }
         }
 
         private void RemoveCircuitBreaker(IInvocation invocation, CircuitBreaker circuitBreaker)
@@ -95,18 +101,23 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
 
         private void ManageExistingCircuitBreaker(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker)
         {
-            if (circuitBreaker.Status == CircuitBreakerStatusEnum.Breaked && circuitBreaker.BreakDate.AddSeconds(settings.BreakingPeriodInSeconds) > _Cache.Now())
+            if (circuitBreaker.Status == CircuitBreakerStatusEnum.Breaked && circuitBreaker.BreakDate.AddSeconds(settings.BreakingPeriodInSeconds) < _Cache.Now())
             {
-                circuitBreaker.Status = CircuitBreakerStatusEnum.Breakable;
-                circuitBreaker.Retries -= 1;
-                _Cache.Insert(GetCacheKey(invocation),
-                    circuitBreaker, _Cache.Now().AddSeconds(settings.RetryingPeriodInSeconds)
-                    );
+                MoveToBreakableForANewTentative(invocation, settings, circuitBreaker);
             }
             if (circuitBreaker.Status == CircuitBreakerStatusEnum.Breaked)
             {
                 throw new CircuitBreakerException(circuitBreaker.BreakingException);
             }
+        }
+
+        private void MoveToBreakableForANewTentative(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker)
+        {
+            circuitBreaker.Status = CircuitBreakerStatusEnum.Breakable;
+            circuitBreaker.Retries -= 1;
+            _Cache.Insert(GetCacheKey(invocation),
+                circuitBreaker, _Cache.Now().AddSeconds(settings.RetryingPeriodInSeconds)
+                );
         }
 
         private CircuitBreaker GetCurrentCircuitBreaker(IInvocation invocation)

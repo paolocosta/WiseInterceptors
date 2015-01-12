@@ -38,5 +38,11 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         {
             return FakeNow;
         }
+
+        public void Reset()
+        {
+            _Elements = new Dictionary<string, Tuple<object, DateTime>>();
+        }
+
     }
 }

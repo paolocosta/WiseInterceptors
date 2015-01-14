@@ -8,6 +8,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
 {
     internal enum CircuitBreakerStatusEnum 
     {
+        Off,
         Breakable,
         Breaked
     }

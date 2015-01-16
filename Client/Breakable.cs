@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptor.Interceptors.CircuitBreaker;
 
-namespace DynamicProxy
+namespace CircuitBreakerDemo
 {
-    public class Breakable : DynamicProxy.IBreakable
+    public class Breakable : CircuitBreakerDemo.IBreakable
     {
 
         [CircuitBreakerSettings(ExceptionType = typeof(Exception), RetryingPeriodInSeconds=60, BreakingPeriodInSeconds=10, ExceptionsBeforeBreak=5)]

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using WiseInterceptor.Interceptors.CircuitBreaker;
 using Autofac.Extras.DynamicProxy2;
 
-namespace DynamicProxy
+namespace CircuitBreakerDemo
 {
 
     class Program

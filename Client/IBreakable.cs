@@ -1,6 +1,7 @@
 ﻿using System;
 using WiseInterceptor.Interceptors.CircuitBreaker;
-namespace DynamicProxy
+
+namespace CircuitBreakerDemo
 {
     public interface IBreakable
     {

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptor;
 
-namespace CircuitBreakerDemo
+namespace CacheDemo
 {
     internal class Cache : ICache
     {

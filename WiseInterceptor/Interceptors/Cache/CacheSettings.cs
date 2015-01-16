@@ -13,13 +13,13 @@ namespace WiseInterceptor.Interceptors.Cache
         High
     }
 
-    public class CacheSettings
+    public class CacheSettingsAttribute : Attribute
     {
-        public CacheSettings()
+        public CacheSettingsAttribute()
         {
-            Duration = 20;
+            Duration = 20 * 60;
             Priority = PriorityEnum.Normal;
-            SoftDuration = 10; 
+            SoftDuration = 10 * 60; 
         }
 
         public int Duration { get; set; }

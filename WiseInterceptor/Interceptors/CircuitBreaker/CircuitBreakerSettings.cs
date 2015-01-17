@@ -14,7 +14,6 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
             RetryingPeriodInSeconds = 60;
             BreakingPeriodInSeconds = 10;
             ExceptionType = typeof(TimeoutException);
-            VaryByMethodArgs = 0;// string.Empty;
         }
         
         /// <summary>

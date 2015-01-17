@@ -114,7 +114,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
 
         private void ManageExistingCircuitBreaker(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker)
         {
-            if (IsBreakingPeriodExpired(settings, circuitBreaker))
+            if (circuitBreaker.Status == CircuitBreakerStatusEnum.Breaked && circuitBreaker.BreakDate.AddSeconds(settings.BreakingPeriodInSeconds) < _Cache.Now())
             {
                 MoveToBreakableForANewTentative(invocation, settings, circuitBreaker);
             }
@@ -122,11 +122,6 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
             {
                 throw new CircuitBreakerException(circuitBreaker.BreakingException);
             }
-        }
-
-        private bool IsBreakingPeriodExpired(CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker)
-        {
-            return circuitBreaker.Status == CircuitBreakerStatusEnum.Breaked && circuitBreaker.BreakDate.AddSeconds(settings.BreakingPeriodInSeconds) < _Cache.Now();
         }
 
         private void MoveToBreakableForANewTentative(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker)

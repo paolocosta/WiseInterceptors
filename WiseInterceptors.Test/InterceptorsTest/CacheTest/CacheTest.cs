@@ -88,7 +88,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void do_void_should_return_exception()
+        public void void_method_decorated_with_cache_should_return_exception()
         {
             var container = BuildContainer();
             

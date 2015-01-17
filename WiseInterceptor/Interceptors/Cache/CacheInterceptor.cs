@@ -36,6 +36,8 @@ namespace WiseInterceptor.Interceptors.Cache
 
             if (settings == null)
             {
+                
+                //No attribute no cache
                 invocation.Proceed();
             }
             else
@@ -45,6 +47,7 @@ namespace WiseInterceptor.Interceptors.Cache
                 bool proceed = true;
                 if (value != null)
                 {
+                    //Check if the soft expiry date is valid
                     if (value.ExpiryDate > _Cache.Now())
                     {
                         invocation.ReturnValue = value.Value;
@@ -52,6 +55,8 @@ namespace WiseInterceptor.Interceptors.Cache
                     }
                     else
                     {
+                        //increase the soft expiry date and insert the value in cache. This means that this request 
+                        //will be in charge of refreshing the query while the others can still see query the cache 
                         _Cache.Insert(
                             key,
                             new CacheValue
@@ -64,17 +69,21 @@ namespace WiseInterceptor.Interceptors.Cache
                         return;
                     }
                 }
+                //proceed is true either when the data was not found in cache or were "softly" expired.
                 if (proceed)
                 {
-                    invocation.Proceed();
-                    _Cache.Insert(
-                            key,
-                            new CacheValue
-                            {
-                                ExpiryDate = _Cache.Now().AddSeconds(settings.SoftDuration),
-                                Value = invocation.ReturnValue
-                            },
-                            _Cache.Now().AddSeconds(settings.Duration));
+                    lock (string.Intern(key))
+                    {
+                        invocation.Proceed();
+                        _Cache.Insert(
+                                key,
+                                new CacheValue
+                                {
+                                    ExpiryDate = _Cache.Now().AddSeconds(settings.SoftDuration),
+                                    Value = invocation.ReturnValue
+                                },
+                                _Cache.Now().AddSeconds(settings.Duration));
+                    }
                 }
             }
         }

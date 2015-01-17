@@ -86,6 +86,17 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             firstResult.Should().NotBe(secondResult);
         }
 
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void do_void_should_return_exception()
+        {
+            var container = BuildContainer();
+            
+            var cachable = container.Resolve<ICachable>();
+            
+            cachable.DoNothing();
+        }
+
     }
 
     public class Cachable:ICachable
@@ -98,6 +109,12 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             return string.Format("{0} {1}",  Name, LastName);
         }
 
+        [CacheSettings]
+        public void DoNothing()
+        {
+            
+        }
+
         public void SetName(string name)
         {
             Name = name;
@@ -108,5 +125,6 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
     {
         string Hello(string LastName);
         void SetName(string name);
+        void DoNothing();
     }
 }

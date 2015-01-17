@@ -16,16 +16,7 @@ namespace WiseInterceptor.Interceptors.Cache
         public CacheInterceptor(ICache cache)
         {
             _Cache = cache;
-            _Helper = new Helper();
-        }
-
-        /// <summary>
-        /// Not exposed poor man's DI for testing purpose
-        /// </summary>
-        /// <param name="helper"></param>
-        internal void SetHelper(IHelper helper)
-        {
-            _Helper = helper;
+            _Helper = new Helper();  //There's no need to use DI for this class
         }
 
         public void Intercept(IInvocation invocation)
@@ -36,12 +27,13 @@ namespace WiseInterceptor.Interceptors.Cache
 
             if (settings == null)
             {
-                
                 //No attribute no cache
                 invocation.Proceed();
             }
             else
             {
+                GuardClauseOnReturnType(invocation);
+
                 var key = _Helper.GetCallIdentifier(invocation);
                 var value = _Cache.Get(key) as CacheValue;
                 bool proceed = true;
@@ -85,6 +77,17 @@ namespace WiseInterceptor.Interceptors.Cache
                                 _Cache.Now().AddSeconds(settings.Duration));
                     }
                 }
+            }
+        }
+
+        private static void GuardClauseOnReturnType(IInvocation invocation)
+        {
+            if (invocation.Method.ReturnType == typeof(void))
+            {
+                throw new InvalidOperationException(string.Format("Cache was added to method {0}.{1} but it is not allowed as it returns void",
+                    invocation.Method.DeclaringType.FullName,
+                    invocation.Method.Name
+                    ));
             }
         }
     }

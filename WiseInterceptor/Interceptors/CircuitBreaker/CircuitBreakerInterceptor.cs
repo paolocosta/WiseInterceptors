@@ -23,7 +23,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
 
         public void Intercept(IInvocation invocation)
         {
-            var settings = GetMethodSettings(invocation);
+            var settings = GetCircuitBreakerSettings(invocation);
             if (settings != null)
             {
                 var circuitBreaker = GetCurrentCircuitBreaker(invocation);
@@ -35,28 +35,33 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
                     }
                     invocation.Proceed();
 
+                    //In case of succesful call we can close the circuit (= delete the circuit breaker)
                     CloseCircuit(invocation, circuitBreaker);
+                }
+                catch (CircuitBreakerException)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    if (ex.GetType() == typeof(CircuitBreakerException))
-                    {
-                        throw ex;
-                    }
-                    
-                    if (circuitBreaker == null)
-                    {
-                        circuitBreaker = CreateNewCircuitBreaker(invocation, settings, circuitBreaker, ex);
-                    }
-                    
-                    circuitBreaker.Retries++;
-                    
-                    if (circuitBreaker.Retries >= settings.ExceptionsBeforeBreak)
-                    {
-                        BreakCircuit(invocation, circuitBreaker);
-                    }
+                    HandleMethodException(invocation, settings, circuitBreaker, ex);
                     throw ex;
                 }
+            }
+        }
+
+        private void HandleMethodException(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker, Exception ex)
+        {
+            if (circuitBreaker == null)
+            {
+                circuitBreaker = CreateNewCircuitBreaker(invocation, settings, circuitBreaker, ex);
+            }
+
+            circuitBreaker.Retries++;
+
+            if (circuitBreaker.Retries >= settings.ExceptionsBeforeBreak)
+            {
+                BreakCircuit(invocation, circuitBreaker);
             }
         }
 
@@ -134,7 +139,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
             return circuitBreaker;
         }
 
-        private static CircuitBreakerSettingsAttribute GetMethodSettings(IInvocation invocation)
+        private static CircuitBreakerSettingsAttribute GetCircuitBreakerSettings(IInvocation invocation)
         {
             MethodInfo methodInfo = invocation.MethodInvocationTarget;
             if (methodInfo == null)

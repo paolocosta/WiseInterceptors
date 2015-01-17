@@ -7,10 +7,13 @@ using WiseInterceptor.Interceptors.CircuitBreaker;
 
 namespace CircuitBreakerDemo
 {
-    public class Breakable : CircuitBreakerDemo.IBreakable
+    public class Breakable : IBreakable
     {
-
-        [CircuitBreakerSettings(ExceptionType = typeof(Exception), RetryingPeriodInSeconds=60, BreakingPeriodInSeconds=10, ExceptionsBeforeBreak=5)]
+        [CircuitBreakerSettings(
+            ExceptionType = typeof(Exception), 
+            RetryingPeriodInSeconds=60, 
+            BreakingPeriodInSeconds=10, 
+            ExceptionsBeforeBreak=5)]
         public virtual string HopeGetSomething()
         {
             DateTime now = DateTime.Now;

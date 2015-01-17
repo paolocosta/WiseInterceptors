@@ -142,10 +142,10 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
         private static CircuitBreakerSettingsAttribute GetCircuitBreakerSettings(IInvocation invocation)
         {
             MethodInfo methodInfo = invocation.MethodInvocationTarget;
-            if (methodInfo == null)
-            {
-                methodInfo = invocation.Method;
-            }
+            //if (methodInfo == null)
+            //{
+            //    methodInfo = invocation.Method;
+            //}
             var settings = methodInfo.GetCustomAttributes(typeof(CircuitBreakerSettingsAttribute), true).SingleOrDefault()
                 as CircuitBreakerSettingsAttribute;
             return settings;

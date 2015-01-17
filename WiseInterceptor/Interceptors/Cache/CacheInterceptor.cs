@@ -71,10 +71,10 @@ namespace WiseInterceptor.Interceptors.Cache
                                 key,
                                 new CacheValue
                                 {
-                                    ExpiryDate = _Cache.Now().AddSeconds(settings.SoftDuration),
+                                    ExpiryDate = _Cache.Now().AddSeconds(settings.Duration),
                                     Value = invocation.ReturnValue
                                 },
-                                _Cache.Now().AddSeconds(settings.Duration));
+                                _Cache.Now().AddSeconds(settings.Duration).AddMinutes(2));
                     }
                 }
             }

@@ -19,11 +19,9 @@ namespace WiseInterceptor.Interceptors.Cache
         {
             Duration = 20 * 60;
             Priority = PriorityEnum.Normal;
-            SoftDuration = 10 * 60; 
         }
 
         public int Duration { get; set; }
-        public int SoftDuration { get; set; }
         public PriorityEnum Priority { get; set; }
     }
 

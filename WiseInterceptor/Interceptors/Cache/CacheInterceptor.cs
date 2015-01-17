@@ -4,16 +4,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WiseInterceptor.Interceptors.Common;
 
 namespace WiseInterceptor.Interceptors.Cache
 {
     public class CacheInterceptor : IInterceptor
     {
         ICache _Cache;
+        IHelper _Helper;
 
         public CacheInterceptor(ICache cache)
         {
             _Cache = cache;
+            _Helper = new Helper();
+        }
+
+        /// <summary>
+        /// Not exposed poor man's DI for testing purpose
+        /// </summary>
+        /// <param name="helper"></param>
+        internal void SetHelper(IHelper helper)
+        {
+            _Helper = helper;
         }
 
         public void Intercept(IInvocation invocation)
@@ -28,7 +40,7 @@ namespace WiseInterceptor.Interceptors.Cache
             }
             else
             {
-                var key = GetCacheKey(invocation);
+                var key = _Helper.GetCallIdentifier(invocation);
                 var value = _Cache.Get(key) as CacheValue;
                 bool proceed = true;
                 if (value != null)
@@ -65,20 +77,6 @@ namespace WiseInterceptor.Interceptors.Cache
                             _Cache.Now().AddSeconds(settings.Duration));
                 }
             }
-        }
-
-        private string GetCacheKey(IInvocation invocation)
-        {
-            return string.Format("{0}_{1}", invocation.Method.DeclaringType.FullName, SerializeArguments(invocation));
-        }
-
-        private static string SerializeArguments(IInvocation invocation)
-        {
-            if(invocation.Arguments.Count()==0)
-            {
-                return "";
-            }
-            return Newtonsoft.Json.JsonConvert.SerializeObject(invocation.Arguments);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using WiseInterceptor.Interceptors.Common;
 
 namespace WiseInterceptor.Interceptors.CircuitBreaker
 {
@@ -12,9 +13,12 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
     public class CircuitBreakerInterceptor:IInterceptor
     {
         ICache _Cache;
+        IHelper _Helper;
+
         public CircuitBreakerInterceptor(ICache cache)
         {
             _Cache = cache;
+            _Helper = new Helper();
         }
 
         public void Intercept(IInvocation invocation)
@@ -31,7 +35,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
                     }
                     invocation.Proceed();
 
-                    RemoveCircuitBreaker(invocation, circuitBreaker);
+                    CloseCircuit(invocation, circuitBreaker);
                 }
                 catch (Exception ex)
                 {
@@ -58,10 +62,10 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
 
         private void BreakCircuit(IInvocation invocation, CircuitBreaker circuitBreaker)
         {
-            _Cache.Remove(GetCacheKey(invocation));
+            _Cache.Remove(_Helper.GetMethodIdentifier(invocation));
             circuitBreaker.Status = CircuitBreakerStatusEnum.Breaked;
             circuitBreaker.BreakDate = _Cache.Now();
-            _Cache.Insert(GetCacheKey(invocation), circuitBreaker, _Cache.Now().AddYears(1));
+            _Cache.Insert(_Helper.GetMethodIdentifier(invocation), circuitBreaker, _Cache.Now().AddYears(1));
         }
 
         private CircuitBreaker CreateNewCircuitBreaker(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker, Exception ex)
@@ -78,7 +82,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
                     Status = CircuitBreakerStatusEnum.Breakable
                 };
 
-                _Cache.Insert(GetCacheKey(invocation),
+                _Cache.Insert(_Helper.GetMethodIdentifier(invocation),
                     circuitBreaker, _Cache.Now().AddSeconds(settings.RetryingPeriodInSeconds)
                     );
             }
@@ -90,11 +94,16 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
             return ex.GetType().IsSubclassOf(settings.ExceptionType) || ex.GetType() == settings.ExceptionType;
         }
 
-        private void RemoveCircuitBreaker(IInvocation invocation, CircuitBreaker circuitBreaker)
+        /// <summary>
+        /// This method closes the circuit, so energy can flow normally
+        /// </summary>
+        /// <param name="invocation"></param>
+        /// <param name="circuitBreaker"></param>
+        private void CloseCircuit(IInvocation invocation, CircuitBreaker circuitBreaker)
         {
             if (circuitBreaker != null)
             {
-                _Cache.Remove(GetCacheKey(invocation));
+                _Cache.Remove(_Helper.GetMethodIdentifier(invocation));
             }
         }
 
@@ -114,14 +123,14 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
         {
             circuitBreaker.Status = CircuitBreakerStatusEnum.Breakable;
             circuitBreaker.Retries -= 1;
-            _Cache.Insert(GetCacheKey(invocation),
+            _Cache.Insert(_Helper.GetMethodIdentifier(invocation),
                 circuitBreaker, _Cache.Now().AddSeconds(settings.RetryingPeriodInSeconds)
                 );
         }
 
         private CircuitBreaker GetCurrentCircuitBreaker(IInvocation invocation)
         {
-            var circuitBreaker = _Cache.Get(GetCacheKey(invocation)) as CircuitBreaker;
+            var circuitBreaker = _Cache.Get(_Helper.GetMethodIdentifier(invocation)) as CircuitBreaker;
             return circuitBreaker;
         }
 
@@ -137,20 +146,6 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
             return settings;
         }
 
-        private string GetCacheKey(IInvocation invocation)
-        {
-            StringBuilder cacheKey = new StringBuilder();
-            cacheKey.Append(string.Format("{0}_", invocation.Method.Name));
-            //if (_Settings.VaryByMethodArgs != null)
-            //{
-            //    var args = _Settings.VaryByMethodArgs.Split(',');
-            //    foreach (var arg in args)
-            //    {
-            //        //cacheKey.Append(string.Format("{0}_", Newtonsoft.Json.JsonConvert.SerializeObject(invocation.Arguments;
-            //    }
-            //}
-
-            return cacheKey.ToString();
-        }
+        
     }
 }

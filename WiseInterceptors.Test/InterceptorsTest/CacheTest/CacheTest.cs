@@ -36,47 +36,54 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         }
 
         [Test]
-        public void two_near_subsequent_call_should_return_stale_result_even_if_the_value_changes()
+        public void two_near_identical_subsequent_call_should_return_the_same_result_even_if_the_value_changes()
         {
             var container = BuildContainer();
-
             var cachable = container.Resolve<ICachable>();
-
             var name = Tuple.Create("Stale","Actual");
-
+            var lastName = "Last Name";
+            
             cachable.SetName(name.Item1);
-
-            cachable.GetName();
-
+            var firstResult = cachable.Hello(lastName);
             cachable.SetName(name.Item2);
-
             _Cache.FakeNow = _Cache.FakeNow.AddMinutes(1);
-
-            var result = cachable.GetName();
-
-            result.Should().Be(name.Item1);
+            var secondResult = cachable.Hello(lastName);
+            
+            firstResult.Should().Be(secondResult);
         }
 
         [Test]
-        public void two_distant_subsequent_call_should_return_different_result_if_the_value_changes()
+        public void two_distant_identical_subsequent_call_should_return_different_results_if_the_value_changes()
         {
             var container = BuildContainer();
-
             var cachable = container.Resolve<ICachable>();
-
             var name = Tuple.Create("Stale", "Actual");
+            var lastName = "Last Name";
 
             cachable.SetName(name.Item1);
-
-            cachable.GetName();
-
+            var firstResult = cachable.Hello(lastName);
             cachable.SetName(name.Item2);
-
             _Cache.FakeNow = _Cache.FakeNow.AddMinutes(21);
+            var secondResult = cachable.Hello(lastName);
 
-            var result = cachable.GetName();
+            firstResult.Should().NotBe(secondResult);
+        }
 
-            result.Should().Be(name.Item2);
+        [Test]
+        public void two_distinct_subsequent_call_should_return_different_results_if_the_value_is_the_same()
+        {
+            var container = BuildContainer();
+            var cachable = container.Resolve<ICachable>();
+            var name = Tuple.Create("Stale", "Actual");
+            var lastName = Tuple.Create("Stale last name", "Actual last name");
+
+            cachable.SetName(name.Item1);
+            var firstResult = cachable.Hello(lastName.Item1);
+            cachable.SetName(name.Item2);
+            _Cache.FakeNow = _Cache.FakeNow.AddMinutes(1);
+            var secondResult = cachable.Hello(lastName.Item2);
+
+            firstResult.Should().NotBe(secondResult);
         }
 
     }
@@ -86,9 +93,9 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         public string Name { get; set; }
 
         [CacheSettings]
-        public string GetName()
+        public string Hello(string LastName)
         {
-            return Name;
+            return string.Format("{0} {1}",  Name, LastName);
         }
 
         public void SetName(string name)
@@ -99,7 +106,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
     public interface ICachable
     {
-        string GetName();
+        string Hello(string LastName);
         void SetName(string name);
     }
 }

@@ -61,11 +61,14 @@
     <Compile Include="Interceptors\CircuitBreaker\CircuitBreakerException.cs" />
     <Compile Include="Interceptors\CircuitBreaker\CircuitBreakerInterceptor.cs" />
     <Compile Include="Interceptors\CircuitBreaker\CircuitBreakerSettings.cs" />
+    <Compile Include="Interceptors\Common\Helper.cs" />
+    <Compile Include="Interceptors\Common\IHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

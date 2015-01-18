@@ -17,6 +17,7 @@ using Castle.DynamicProxy;
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 {
     [TestFixture]
+    [Category("Cache")]
     public class CacheTest
     {
         CacheStub _Cache;
@@ -74,18 +75,18 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         }
 
         [Test]
-        public void two_distinct_subsequent_call_should_return_different_results_if_the_value_is_the_same()
+        public void two_distinct_subsequent_call_should_return_different_results_if_the_the_method_args_are_different_and_of_course_the_query_result_changes()
         {
             var container = BuildContainer();
             var cachable = container.Resolve<ICachable>();
             var name = Tuple.Create("Stale", "Actual");
-            var lastName = Tuple.Create("Stale last name", "Actual last name");
+            var args = Tuple.Create("args1", "args2");
 
             cachable.SetName(name.Item1);
-            var firstResult = cachable.Hello(lastName.Item1);
+            var firstResult = cachable.Hello(args.Item1);
             cachable.SetName(name.Item2);
             _Cache.FakeNow = _Cache.FakeNow.AddMinutes(1);
-            var secondResult = cachable.Hello(lastName.Item2);
+            var secondResult = cachable.Hello(args.Item2);
 
             firstResult.Should().NotBe(secondResult);
         }
@@ -147,11 +148,12 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         public string Name { get; set; }
 
         [CacheSettings]
-        public string Hello(string LastName)
+        public string Hello(string arg)
         {
-            return string.Format("{0} {1}",  Name, LastName);
+            return Name;
         }
 
+        //This nonsense method is intended to test the unhappy case
         [CacheSettings]
         public void DoNothing()
         {
@@ -166,7 +168,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
     public interface ICachable
     {
-        string Hello(string LastName);
+        string Hello(string arg);
         void SetName(string name);
         void DoNothing();
     }

@@ -60,6 +60,7 @@ namespace WiseInterceptor.Interceptors.Cache
 
                 lock (string.Intern(key))
                 {
+                     
                     invocation.Proceed();
                     _Cache.Insert(
                             key,

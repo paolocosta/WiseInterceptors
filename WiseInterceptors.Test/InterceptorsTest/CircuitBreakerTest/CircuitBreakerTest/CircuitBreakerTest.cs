@@ -12,6 +12,7 @@ using WiseInterceptor.Interceptors.CircuitBreaker;
 namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreakerTest
 {
     [TestFixture]
+    [Category("Circuit Breaker")]
     public class CircuitBreakerTest
     {
         CacheStub _Cache;
@@ -37,6 +38,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         }
 
         [Test]
+        [Category("Circuit Breaker")]
         public void call_with_no_exception_should_not_raise_exception()
         {
             var container = BuildContainer();
@@ -49,6 +51,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         }
 
         [Test]
+        [Category("Circuit Breaker")]
         [ExpectedException(typeof(TimeoutException))]
         public void call_with_exception_should_raise_exception()
         {
@@ -60,6 +63,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         }
 
         [Test]
+        [Category("Circuit Breaker")]
         public void three_calls_with_exception_should_raise_three_timeout_exception()
         {
             var container = BuildContainer();
@@ -82,6 +86,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         }
 
         [Test]
+        [Category("Circuit Breaker")]
         public void three_calls_with_exception_and_one_with_no_exception_in_less_than_60_seconds_should_raise_three_timeout_exception_and_one_circuit_breaker_exception()
         {
             var container = BuildContainer();
@@ -110,6 +115,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         }
 
         [Test]
+        [Category("Circuit Breaker")]
         public void four_calls_with_exception_in_more_than_60_seconds_should_raise_four_timeout_exception()
         {
             var container = BuildContainer();
@@ -139,6 +145,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         }
 
         [Test]
+        [Category("Circuit Breaker")]
         public void four_calls_with_exception_in_less_than_60_seconds_should_raise_three_timeout_exceptions_and_one_circuitbreaker_exception_next_call_after_more_than_60_seconds_should_pass()
         {
             var container = BuildContainer();

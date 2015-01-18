@@ -13,7 +13,7 @@ using FluentAssertions;
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 {
     [TestFixture]
-    public class CacheTest
+    public class CacheInterceptorTest
     {
         CacheStub _Cache;
 

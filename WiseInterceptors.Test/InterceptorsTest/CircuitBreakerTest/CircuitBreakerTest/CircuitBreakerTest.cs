@@ -29,8 +29,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
             builder.Register(c => new CircuitBreakerInterceptor(_Cache));
 
             builder.RegisterType<Breakable>()
-                .As<IBreakable>()
-            .EnableInterfaceInterceptors()
+            .EnableClassInterceptors()
             .InterceptedBy(typeof(CircuitBreakerInterceptor));
 
             var container = builder.Build();
@@ -43,7 +42,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         {
             var container = BuildContainer();
 
-            var breakable = container.Resolve<IBreakable>();
+            var breakable = container.Resolve<Breakable>();
 
             breakable.Call(false);
 
@@ -57,7 +56,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         {
             var container = BuildContainer();
 
-            var breakable = container.Resolve<IBreakable>();
+            var breakable = container.Resolve<Breakable>();
 
             breakable.Call(true);
         }
@@ -68,7 +67,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         {
             var container = BuildContainer();
             List<Exception> exceptions = new List<Exception>();
-            var breakable = container.Resolve<IBreakable>();
+            var breakable = container.Resolve<Breakable>();
 
             for (int i = 0; i < 3; i++)
             {
@@ -91,7 +90,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         {
             var container = BuildContainer();
             Dictionary<int, Exception> exceptions = new Dictionary<int, Exception>();
-            var breakable = container.Resolve<IBreakable>();
+            var breakable = container.Resolve<Breakable>();
 
             for (int i = 0; i < 4; i++)
             {
@@ -120,7 +119,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         {
             var container = BuildContainer();
             Dictionary<int, Exception> exceptions = new Dictionary<int, Exception>();
-            var breakable = container.Resolve<IBreakable>();
+            var breakable = container.Resolve<Breakable>();
 
             for (int i = 0; i < 4; i++)
             {
@@ -150,7 +149,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         {
             var container = BuildContainer();
             Dictionary<int, Exception> exceptions = new Dictionary<int, Exception>();
-            var breakable = container.Resolve<IBreakable>();
+            var breakable = container.Resolve<Breakable>();
 
             for (int i = 0; i < 5; i++)
             {
@@ -176,7 +175,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         }
     }
 
-    public class Breakable : WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreakerTest.IBreakable 
+    public class Breakable 
     {
         [CircuitBreakerSettings(
             ExceptionType = typeof(Exception), 
@@ -190,8 +189,5 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         }
     }
 
-    public interface IBreakable
-    {
-        void Call(bool raiseException);
-    }
+   
 }

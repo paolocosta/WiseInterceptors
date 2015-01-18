@@ -55,7 +55,6 @@
   <ItemGroup>
     <Compile Include="Breakable.cs" />
     <Compile Include="Cache.cs" />
-    <Compile Include="IBreakable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -22,7 +22,7 @@ namespace CircuitBreakerDemo
 
                 for (int i = 0; i < 10000; i++)
                 {
-                    IBreakable b = scope.Resolve<IBreakable>();
+                    var b = scope.Resolve<Breakable>();
                     try
                     {
                         System.Threading.Thread.Sleep(100);
@@ -44,8 +44,7 @@ namespace CircuitBreakerDemo
             builder.Register(c => new CircuitBreakerInterceptor(new Cache()));
 
             builder.RegisterType<Breakable>()
-                .As<IBreakable>()
-            .EnableInterfaceInterceptors()
+            .EnableClassInterceptors()
             .InterceptedBy(typeof(CircuitBreakerInterceptor));
 
             var container = builder.Build();

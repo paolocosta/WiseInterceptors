@@ -7,7 +7,7 @@ using WiseInterceptor.Interceptors.CircuitBreaker;
 
 namespace CircuitBreakerDemo
 {
-    public class Breakable : IBreakable
+    public class Breakable 
     {
         [CircuitBreakerSettings(
             ExceptionType = typeof(Exception), 

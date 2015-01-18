@@ -32,8 +32,8 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             builder.Register(c => new CacheInterceptor(_Cache));
 
-            builder.RegisterType<Cachable>().As<ICachable>()
-            .EnableInterfaceInterceptors()
+            builder.RegisterType<Cachable>()
+            .EnableClassInterceptors()
             .InterceptedBy(typeof(CacheInterceptor));
 
             var container = builder.Build();
@@ -44,7 +44,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         public void two_near_identical_subsequent_call_should_return_the_same_result_even_if_the_value_changes()
         {
             var container = BuildContainer();
-            var cachable = container.Resolve<ICachable>();
+            var cachable = container.Resolve<Cachable>();
             var name = Tuple.Create("Stale","Actual");
             var lastName = "Last Name";
             
@@ -61,7 +61,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         public void two_distant_identical_subsequent_call_should_return_different_results_if_the_value_changes()
         {
             var container = BuildContainer();
-            var cachable = container.Resolve<ICachable>();
+            var cachable = container.Resolve<Cachable>();
             var name = Tuple.Create("Stale", "Actual");
             var lastName = "Last Name";
 
@@ -78,7 +78,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         public void two_distinct_subsequent_call_should_return_different_results_if_the_the_method_args_are_different_and_of_course_the_query_result_changes()
         {
             var container = BuildContainer();
-            var cachable = container.Resolve<ICachable>();
+            var cachable = container.Resolve<Cachable>();
             var name = Tuple.Create("Stale", "Actual");
             var args = Tuple.Create("args1", "args2");
 
@@ -97,7 +97,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         {
             var container = BuildContainer();
             
-            var cachable = container.Resolve<ICachable>();
+            var cachable = container.Resolve<Cachable>();
             
             cachable.DoNothing();
         }
@@ -143,19 +143,20 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         }
     }
 
-    public class Cachable:ICachable
+    public class Cachable
     {
         public string Name { get; set; }
 
         [CacheSettings]
-        public string Hello(string arg)
+
+        public virtual string Hello(string arg)
         {
             return Name;
         }
 
         //This nonsense method is intended to test the unhappy case
         [CacheSettings]
-        public void DoNothing()
+        public virtual void DoNothing()
         {
             
         }
@@ -166,10 +167,5 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         }
     }
 
-    public interface ICachable
-    {
-        string Hello(string arg);
-        void SetName(string name);
-        void DoNothing();
-    }
+    
 }

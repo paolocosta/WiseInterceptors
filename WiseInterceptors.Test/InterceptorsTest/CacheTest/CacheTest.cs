@@ -104,33 +104,13 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         [Test]
         public void when_returned_value_is_softly_expired_insert_in_cache_should_be_called_twice_with_different_expiry_dates()
         {
-             var start = new DateTime(2000, 1, 1);
-           
+            var start = new DateTime(2000, 1, 1);
+            var calls = Tuple.Create(0, 0);
+
             var cache = NSubstitute.Substitute.For<ICache>();
-
-            var invocation = Substitute.For<IInvocation>();
-
-            invocation.When(x => x.Proceed()).Do(x => { });
-            invocation.ReturnValue.Returns(2);
-            
-            var helper = Substitute.For<IHelper>();
-
-            helper.GetInvocationMethodAttribute<CacheSettingsAttribute>(Arg.Any<IInvocation>())
-                .Returns(new CacheSettingsAttribute());
-
-            helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
-
-            var interceptor = new CacheInterceptor(cache);
-            
-            interceptor.SetHelper(helper);
-
             cache.Now().Returns(start);
-            
             //Value returned from cache is sotly expired
             cache.Get(Arg.Any<string>()).Returns(new CacheValue { ExpiryDate = start.AddSeconds(-1), Value = 1 });
-
-            var calls = Tuple.Create(0,0);
-
             cache
                 .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 1), Arg.Is<DateTime>(y => (y - start) > new TimeSpan(20, 0, 0, 0, 0))))
                 .Do(x => calls = Tuple.Create(calls.Item1 + 1, calls.Item2));
@@ -139,6 +119,18 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
                 .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 2), Arg.Is<DateTime>(y => (y - start) < new TimeSpan(20, 0, 0, 0, 0))))
                 .Do(x => calls = Tuple.Create(calls.Item1, calls.Item2 + 1));
 
+            var invocation = Substitute.For<IInvocation>();
+            invocation.When(x => x.Proceed()).Do(x => { });
+            invocation.ReturnValue.Returns(2);
+            
+            var helper = Substitute.For<IHelper>();
+            helper.GetInvocationMethodAttribute<CacheSettingsAttribute>(Arg.Any<IInvocation>())
+                .Returns(new CacheSettingsAttribute());
+            helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
+
+            var interceptor = new CacheInterceptor(cache);
+            interceptor.SetHelper(helper);
+            
             interceptor.Intercept(invocation);
 
             calls.Should().Be(Tuple.Create(1, 1));

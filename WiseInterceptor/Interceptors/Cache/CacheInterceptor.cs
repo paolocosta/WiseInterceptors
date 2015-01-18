@@ -11,23 +11,17 @@ namespace WiseInterceptor.Interceptors.Cache
     public class CacheInterceptor : IInterceptor
     {
         ICache _Cache;
-        IHelper _Helper;
+        public IHelper Helper { private get; set; }
 
         public CacheInterceptor(ICache cache)
         {
             _Cache = cache;
-            _Helper = new Helper();  //There's no need to use DI for this class
-        }
-
-        //For testing purpose
-        public void SetHelper(IHelper helper)
-        {
-            _Helper = helper;
+            Helper = new Helper();  //Default implementation if not specified by means of the SetHelperMethod
         }
 
         public void Intercept(IInvocation invocation)
         {
-            CacheSettingsAttribute settings = _Helper.GetInvocationMethodAttribute<CacheSettingsAttribute>(invocation);
+            CacheSettingsAttribute settings = Helper.GetInvocationMethodAttribute<CacheSettingsAttribute>(invocation);
             //CacheSettingsAttribute settings =
             //    invocation.MethodInvocationTarget.GetCustomAttributes(typeof(CacheSettingsAttribute), false)
             //    .FirstOrDefault() as CacheSettingsAttribute;
@@ -41,7 +35,7 @@ namespace WiseInterceptor.Interceptors.Cache
             {
                 CheckNotVoidReturnType(invocation);
 
-                var key = _Helper.GetCallIdentifier(invocation);
+                var key = Helper.GetCallIdentifier(invocation);
                 var value = _Cache.Get(key) as CacheValue;
 
                 if (value != null)
@@ -84,7 +78,7 @@ namespace WiseInterceptor.Interceptors.Cache
 
         private void CheckNotVoidReturnType(IInvocation invocation)
         {
-            if (_Helper.IsReturnTypeVoid(invocation))
+            if (Helper.IsReturnTypeVoid(invocation))
             {
                 throw new InvalidOperationException(string.Format("Cache was added to method {0}.{1} but it is not allowed as it returns void",
                     invocation.Method.DeclaringType.FullName,

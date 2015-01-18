@@ -133,7 +133,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
 
             var interceptor = new CacheInterceptor(cache);
-            interceptor.SetHelper(helper);
+            interceptor.Helper= helper;
             
             interceptor.Intercept(invocation);
 

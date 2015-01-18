@@ -32,7 +32,7 @@ namespace WiseInterceptor.Interceptors.Cache
             }
             else
             {
-                GuardClauseOnReturnType(invocation);
+                CheckNotVoidReturnType(invocation);
 
                 var key = _Helper.GetCallIdentifier(invocation);
                 var value = _Cache.Get(key) as CacheValue;
@@ -80,7 +80,7 @@ namespace WiseInterceptor.Interceptors.Cache
             }
         }
 
-        private static void GuardClauseOnReturnType(IInvocation invocation)
+        private static void CheckNotVoidReturnType(IInvocation invocation)
         {
             if (invocation.Method.ReturnType == typeof(void))
             {

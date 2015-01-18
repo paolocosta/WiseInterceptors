@@ -22,10 +22,7 @@ namespace WiseInterceptor.Interceptors.Cache
         public void Intercept(IInvocation invocation)
         {
             CacheSettingsAttribute settings = Helper.GetInvocationMethodAttribute<CacheSettingsAttribute>(invocation);
-            //CacheSettingsAttribute settings =
-            //    invocation.MethodInvocationTarget.GetCustomAttributes(typeof(CacheSettingsAttribute), false)
-            //    .FirstOrDefault() as CacheSettingsAttribute;
-
+            
             if (settings == null)
             {
                 //No attribute no cache

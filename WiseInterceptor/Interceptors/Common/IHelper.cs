@@ -11,5 +11,7 @@ namespace WiseInterceptor.Interceptors.Common
     {
         string GetMethodIdentifier(IInvocation invocation);
         string GetCallIdentifier(IInvocation invocation);
+        T GetInvocationMethodAttribute<T>(IInvocation invocation) where T : class;
+        bool IsReturnTypeVoid(IInvocation invocation);
     }
 }

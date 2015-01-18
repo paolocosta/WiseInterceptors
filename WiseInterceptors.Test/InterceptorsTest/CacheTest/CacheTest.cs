@@ -9,11 +9,15 @@ using System.Threading.Tasks;
 using WiseInterceptor.Interceptors.Cache;
 using WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreakerTest;
 using FluentAssertions;
+using WiseInterceptor;
+using NSubstitute;
+using WiseInterceptor.Interceptors.Common;
+using Castle.DynamicProxy;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 {
     [TestFixture]
-    public class CacheInterceptorTest
+    public class CacheTest
     {
         CacheStub _Cache;
 
@@ -97,6 +101,45 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             cachable.DoNothing();
         }
 
+        [Test]
+        public void when_returned_value_is_softly_expired_insert_in_cache_should_be_called_twice_with_different_expiry_dates()
+        {
+             var start = new DateTime(2000, 1, 1);
+           
+            var cache = NSubstitute.Substitute.For<ICache>();
+
+            var invocation = Substitute.For<IInvocation>();
+
+            invocation.When(x => x.Proceed()).Do(x => start = start.AddSeconds(1));
+            
+            var helper = Substitute.For<IHelper>();
+
+            helper.GetInvocationMethodAttribute<CacheSettingsAttribute>(Arg.Any<IInvocation>())
+                .Returns(new CacheSettingsAttribute());
+
+            helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
+
+            var interceptor = new CacheInterceptor(cache);
+            
+            interceptor.SetHelper(helper);
+
+            cache.Now().Returns(start);
+            cache.Get(Arg.Any<string>()).Returns(new CacheValue { ExpiryDate = start.AddSeconds(-1), Value = 1 });
+
+            int callCount = 0;
+
+            cache
+                .When(x => x.Insert(Arg.Any<string>(), Arg.Any<object>(), Arg.Is<DateTime>(y => (y - start) > new TimeSpan(20, 0, 0, 0, 0))))
+                .Do(x => callCount++);
+
+            cache
+                .When(x => x.Insert(Arg.Any<string>(), Arg.Any<object>(), Arg.Is<DateTime>(y => (y - start) < new TimeSpan(20, 0, 0, 0, 0))))
+                .Do(x => callCount++);
+
+            interceptor.Intercept(invocation);
+
+            callCount.Should().Be(2);
+        }
     }
 
     public class Cachable:ICachable

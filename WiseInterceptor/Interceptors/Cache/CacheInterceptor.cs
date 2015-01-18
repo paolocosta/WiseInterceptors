@@ -19,11 +19,18 @@ namespace WiseInterceptor.Interceptors.Cache
             _Helper = new Helper();  //There's no need to use DI for this class
         }
 
+        //For testing purpose
+        public void SetHelper(IHelper helper)
+        {
+            _Helper = helper;
+        }
+
         public void Intercept(IInvocation invocation)
         {
-            CacheSettingsAttribute settings =
-                invocation.MethodInvocationTarget.GetCustomAttributes(typeof(CacheSettingsAttribute), false)
-                .FirstOrDefault() as CacheSettingsAttribute;
+            CacheSettingsAttribute settings = _Helper.GetInvocationMethodAttribute<CacheSettingsAttribute>(invocation);
+            //CacheSettingsAttribute settings =
+            //    invocation.MethodInvocationTarget.GetCustomAttributes(typeof(CacheSettingsAttribute), false)
+            //    .FirstOrDefault() as CacheSettingsAttribute;
 
             if (settings == null)
             {
@@ -36,7 +43,7 @@ namespace WiseInterceptor.Interceptors.Cache
 
                 var key = _Helper.GetCallIdentifier(invocation);
                 var value = _Cache.Get(key) as CacheValue;
-                bool proceed = true;
+
                 if (value != null)
                 {
                     //Check if the soft expiry date is valid
@@ -57,32 +64,27 @@ namespace WiseInterceptor.Interceptors.Cache
                                 Value = value.Value
                             },
                             _Cache.Now().AddYears(1));
-
-                        return;
                     }
                 }
-                //proceed is true either when the data was not found in cache or were "softly" expired.
-                if (proceed)
+
+                lock (string.Intern(key))
                 {
-                    lock (string.Intern(key))
-                    {
-                        invocation.Proceed();
-                        _Cache.Insert(
-                                key,
-                                new CacheValue
-                                {
-                                    ExpiryDate = _Cache.Now().AddSeconds(settings.Duration),
-                                    Value = invocation.ReturnValue
-                                },
-                                _Cache.Now().AddSeconds(settings.Duration).AddMinutes(2));
-                    }
+                    invocation.Proceed();
+                    _Cache.Insert(
+                            key,
+                            new CacheValue
+                            {
+                                ExpiryDate = _Cache.Now().AddSeconds(settings.Duration),
+                                Value = invocation.ReturnValue
+                            },
+                            _Cache.Now().AddSeconds(settings.Duration).AddMinutes(2));
                 }
             }
         }
 
-        private static void CheckNotVoidReturnType(IInvocation invocation)
+        private void CheckNotVoidReturnType(IInvocation invocation)
         {
-            if (invocation.Method.ReturnType == typeof(void))
+            if (_Helper.IsReturnTypeVoid(invocation))
             {
                 throw new InvalidOperationException(string.Format("Cache was added to method {0}.{1} but it is not allowed as it returns void",
                     invocation.Method.DeclaringType.FullName,

@@ -19,7 +19,7 @@ namespace WiseInterceptor.Interceptors.Common
             return string.Format("{0}_{1}_{2}", invocation.Method.DeclaringType.FullName, invocation.Method.Name, SerializeArguments(invocation));
         }
 
-        public T GetInvocationMethodAttribute<T>(IInvocation invocation) where T : class
+        public T GetInvocationMethodAttribute<T>(IInvocation invocation) where T : Attribute
         {
             T value =
                 invocation.MethodInvocationTarget.GetCustomAttributes(typeof(T), false) 

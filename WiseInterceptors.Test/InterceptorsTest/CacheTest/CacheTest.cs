@@ -107,25 +107,29 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             var start = new DateTime(2000, 1, 1);
             var calls = Tuple.Create(0, 0);
 
+            var invocation = Substitute.For<IInvocation>();
+
+            //new value returned from method equals 2
+            invocation.ReturnValue.Returns(2);
+
             var cache = NSubstitute.Substitute.For<ICache>();
             cache.Now().Returns(start);
-            //Value returned from cache is sotly expired
+            //Value returned from cache is sotly expired and equals 1
             cache.Get(Arg.Any<string>()).Returns(new CacheValue { ExpiryDate = start.AddSeconds(-1), Value = 1 });
+
+            //first call to _Cache.Insert has a long expiration and value equals 1 as the value returned from cache
             cache
                 .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 1), Arg.Is<DateTime>(y => (y - start) > new TimeSpan(20, 0, 0, 0, 0))))
                 .Do(x => calls = Tuple.Create(calls.Item1 + 1, calls.Item2));
 
+            //second call to _Cache.Insert has a short expiration and value equals to
             cache
                 .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 2), Arg.Is<DateTime>(y => (y - start) < new TimeSpan(20, 0, 0, 0, 0))))
                 .Do(x => calls = Tuple.Create(calls.Item1, calls.Item2 + 1));
 
-            var invocation = Substitute.For<IInvocation>();
-            invocation.When(x => x.Proceed()).Do(x => { });
-            invocation.ReturnValue.Returns(2);
-            
             var helper = Substitute.For<IHelper>();
             helper.GetInvocationMethodAttribute<CacheSettingsAttribute>(Arg.Any<IInvocation>())
-                .Returns(new CacheSettingsAttribute());
+                .Returns(new CacheSettingsAttribute { Duration = 20 * 60, Priority = PriorityEnum.Normal });
             helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
 
             var interceptor = new CacheInterceptor(cache);
@@ -133,6 +137,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             
             interceptor.Intercept(invocation);
 
+            //we checked that both calls where performed correctly
             calls.Should().Be(Tuple.Create(1, 1));
         }
     }

@@ -110,7 +110,8 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             var invocation = Substitute.For<IInvocation>();
 
-            invocation.When(x => x.Proceed()).Do(x => start = start.AddSeconds(1));
+            invocation.When(x => x.Proceed()).Do(x => { });
+            invocation.ReturnValue.Returns(2);
             
             var helper = Substitute.For<IHelper>();
 
@@ -124,21 +125,23 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             interceptor.SetHelper(helper);
 
             cache.Now().Returns(start);
+            
+            //Value returned from cache is sotly expired
             cache.Get(Arg.Any<string>()).Returns(new CacheValue { ExpiryDate = start.AddSeconds(-1), Value = 1 });
 
-            int callCount = 0;
+            var calls = Tuple.Create(0,0);
 
             cache
-                .When(x => x.Insert(Arg.Any<string>(), Arg.Any<object>(), Arg.Is<DateTime>(y => (y - start) > new TimeSpan(20, 0, 0, 0, 0))))
-                .Do(x => callCount++);
+                .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 1), Arg.Is<DateTime>(y => (y - start) > new TimeSpan(20, 0, 0, 0, 0))))
+                .Do(x => calls = Tuple.Create(calls.Item1 + 1, calls.Item2));
 
             cache
-                .When(x => x.Insert(Arg.Any<string>(), Arg.Any<object>(), Arg.Is<DateTime>(y => (y - start) < new TimeSpan(20, 0, 0, 0, 0))))
-                .Do(x => callCount++);
+                .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 2), Arg.Is<DateTime>(y => (y - start) < new TimeSpan(20, 0, 0, 0, 0))))
+                .Do(x => calls = Tuple.Create(calls.Item1, calls.Item2 + 1));
 
             interceptor.Intercept(invocation);
 
-            callCount.Should().Be(2);
+            calls.Should().Be(Tuple.Create(1, 1));
         }
     }
 

@@ -80,7 +80,9 @@
     <Compile Include="InterceptorsTest\CircuitBreakerTest\CircuitBreakerTest\Cache.cs" />
     <Compile Include="InterceptorsTest\CircuitBreakerTest\CircuitBreakerTest\CircuitBreakerTest.cs" />
     <Compile Include="InterceptorsTest\CommonTest\HelperTest.cs" />
+    <Compile Include="InterceptorsTest\DefensiveTest\DefensiveInterceptorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UtilitiesTest\UtilsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

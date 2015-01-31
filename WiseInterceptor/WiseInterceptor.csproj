@@ -63,7 +63,11 @@
     <Compile Include="Interceptors\CircuitBreaker\CircuitBreakerSettings.cs" />
     <Compile Include="Interceptors\Common\Helper.cs" />
     <Compile Include="Interceptors\Common\IHelper.cs" />
+    <Compile Include="Interceptors\Defensive\BlockDefaultValuesAttribute.cs" />
+    <Compile Include="Interceptors\Defensive\DefensiveInterceptor.cs" />
+    <Compile Include="Interceptors\Defensive\PreconditionViolatedException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

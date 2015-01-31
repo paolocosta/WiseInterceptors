@@ -34,5 +34,19 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
             var helper = new Helper();
             helper.GetMethodIdentifier(invocation).Should().Be("System.DateTime_FromOADate");
         }
+
+        [Test]
+        public void GetDefaultValue_shuould_return_0_for_a_value_type()
+        {
+            var sut = new Helper();
+            sut.GetDefaultValue(typeof(Int32)).Should().Be(0);
+        }
+
+        [Test]
+        public void GetDefaultValue_shuould_return_null_for_a_reference_type()
+        {
+            var sut = new Helper();
+            sut.GetDefaultValue(typeof(System.IO.MemoryStream)).Should().Be(null);
+        }
     }
 }

@@ -6,16 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using WiseInterceptor.Utilities;
+using WiseInterceptor.Interceptors.Common;
 
 namespace WiseInterceptor.Interceptors.Defensive
 {
     public class DefensiveInterceptor:IInterceptor
     {
-        IUtils _utils;
+        IHelper _helper;
         
         public DefensiveInterceptor()
         {
-            _utils = new Utils();
+            _helper = new Helper();
         }
         
         public void Intercept(IInvocation invocation)
@@ -28,9 +29,9 @@ namespace WiseInterceptor.Interceptors.Defensive
         {
             if (invocation.Arguments.Count() > 0 && invocation.MethodInvocationTarget.GetCustomAttributes<BlockDefaultValuesAttribute>().Count() > 0)
             {
-                if (invocation.Arguments.Where(p => p.Equals(_utils.GetDefaultValue(p.GetType()))).Any())
+                if (invocation.Arguments.Where(p => p.Equals(_helper.GetDefaultValue(p.GetType()))).Any())
                 {
-                    throw new BlockDefaultValuePreconditionViolatedException(invocation, _utils);
+                    throw new BlockDefaultValuePreconditionViolatedException(invocation, _helper);
                 }
             }
         }

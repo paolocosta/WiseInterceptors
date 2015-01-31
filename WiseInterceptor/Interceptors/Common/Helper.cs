@@ -36,10 +36,18 @@ namespace WiseInterceptor.Interceptors.Common
             return Newtonsoft.Json.JsonConvert.SerializeObject(invocation.Arguments);
         }
 
-
         public bool IsReturnTypeVoid(IInvocation invocation)
         {
             return invocation.Method.ReturnType == typeof(void);
+        }
+
+        public object GetDefaultValue(Type type)
+        {
+            if (type.IsValueType)
+            {
+                return Activator.CreateInstance(type);
+            }
+            return null;
         }
     }
 }

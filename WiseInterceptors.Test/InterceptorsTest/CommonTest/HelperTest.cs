@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using NSubstitute;
 using Castle.DynamicProxy;
-using WiseInterceptor.Interceptors.Common;
 using FluentAssertions;
+using WiseInterceptor.Common;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
 {

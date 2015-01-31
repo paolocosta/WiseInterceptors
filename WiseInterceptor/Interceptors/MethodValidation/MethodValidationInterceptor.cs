@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-using WiseInterceptor.Interceptors.Common;
+using WiseInterceptor.Common;
 
 namespace WiseInterceptor.Interceptors.MethodValidation
 {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WiseInterceptor.Interceptors.Common;
+using WiseInterceptor.Common;
 
 namespace WiseInterceptor.Interceptors.Cache
 {
@@ -16,7 +16,7 @@ namespace WiseInterceptor.Interceptors.Cache
         public CacheInterceptor(ICache cache)
         {
             _Cache = cache;
-            Helper = new Helper();  //Default implementation if not specified by means of the SetHelperMethod
+            Helper = new Helper();  
         }
 
         public void Intercept(IInvocation invocation)

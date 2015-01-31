@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptor;
-using WiseInterceptor.Interceptors.Common;
+using WiseInterceptor.Common;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreakerTest
 {

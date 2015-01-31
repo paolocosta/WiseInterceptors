@@ -11,8 +11,8 @@ using WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreakerTe
 using FluentAssertions;
 using WiseInterceptor;
 using NSubstitute;
-using WiseInterceptor.Interceptors.Common;
 using Castle.DynamicProxy;
+using WiseInterceptor.Common;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 {

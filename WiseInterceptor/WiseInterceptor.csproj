@@ -53,7 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interceptors\Common\ICache.cs" />
+    <Compile Include="Common\ICache.cs" />
     <Compile Include="Interceptors\Cache\CacheInterceptor.cs" />
     <Compile Include="Interceptors\Cache\CacheSettings.cs" />
     <Compile Include="Interceptors\Cache\CacheValue.cs" />
@@ -61,11 +61,11 @@
     <Compile Include="Interceptors\CircuitBreaker\CircuitBreakerException.cs" />
     <Compile Include="Interceptors\CircuitBreaker\CircuitBreakerInterceptor.cs" />
     <Compile Include="Interceptors\CircuitBreaker\CircuitBreakerSettings.cs" />
-    <Compile Include="Interceptors\Common\Helper.cs" />
-    <Compile Include="Interceptors\Common\IHelper.cs" />
+    <Compile Include="Common\Helper.cs" />
+    <Compile Include="Common\IHelper.cs" />
     <Compile Include="Interceptors\MethodValidation\BlockDefaultResultAttribute.cs" />
     <Compile Include="Interceptors\MethodValidation\BlockDefaultValuesAttribute.cs" />
-    <Compile Include="Interceptors\MethodValidation\DefensiveInterceptor.cs" />
+    <Compile Include="Interceptors\MethodValidation\MethodValidationInterceptor.cs" />
     <Compile Include="Interceptors\MethodValidation\DefaultResultPostConditionException.cs" />
     <Compile Include="Interceptors\MethodValidation\DefaultParameterValuePreConditionException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

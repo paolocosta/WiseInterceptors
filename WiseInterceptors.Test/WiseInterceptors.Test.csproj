@@ -80,7 +80,7 @@
     <Compile Include="InterceptorsTest\CircuitBreakerTest\CircuitBreakerTest\Cache.cs" />
     <Compile Include="InterceptorsTest\CircuitBreakerTest\CircuitBreakerTest\CircuitBreakerTest.cs" />
     <Compile Include="InterceptorsTest\CommonTest\HelperTest.cs" />
-    <Compile Include="InterceptorsTest\DefensiveTest\DefensiveInterceptorTest.cs" />
+    <Compile Include="InterceptorsTest\MethodValidationTest\MethodValidationInterceptorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

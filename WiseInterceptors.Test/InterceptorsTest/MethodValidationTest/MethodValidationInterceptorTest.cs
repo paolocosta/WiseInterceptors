@@ -7,27 +7,27 @@ using NSubstitute;
 using Castle.DynamicProxy;
 using System.Reflection;
 using NUnit.Framework;
-using WiseInterceptor.Interceptors.Defensive;
 using FluentAssertions;
+using WiseInterceptor.Interceptors.MethodValidation;
 
-namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
+namespace WiseInterceptors.Test.InterceptorsTest.MethodValidationTest
 {
-    public class DefensiveInterceptorTest
+    public class MethodValidationInterceptorTest
     {
-        private DefensiveInterceptor _sut;
+        private MethodValidationInterceptor _sut;
         private IInvocation _invocation;
 
         [SetUp]
         public void Setup()
         {
-            _sut = new DefensiveInterceptor();
+            _sut = new MethodValidationInterceptor();
             _invocation = Substitute.For<IInvocation>();
         }
 
         [Test]
         public void should_not_throw_exception_when_method_has_no_parameters()
         {
-            _invocation.MethodInvocationTarget.Returns(typeof(DefensiveInterceptorTestHelper).GetMethod("MethodWithNoParameters"));
+            _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("MethodWithNoParameters"));
 
             _sut.Intercept(_invocation);
 
@@ -38,7 +38,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
         public void should_not_throw_exception_when_BlockDefaultValues_is_defined_and_all_paameter_values_are_not_default()
         {
             _invocation.Arguments.Returns(new object[] { 1, 2, 3 });
-            _invocation.MethodInvocationTarget.Returns(typeof(DefensiveInterceptorTestHelper).GetMethod("MethodWithBlockDefaultValuesAttribute"));
+            _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("MethodWithBlockDefaultValuesAttribute"));
 
             _sut.Intercept(_invocation);
 
@@ -49,7 +49,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
         public void should_throw_exception_when_BlockDefaultValues_is_defined_and_at_least_one_parameter_value_is_default()
         {
             _invocation.Arguments.Returns(new object[] { 0, 2, 3 });
-            _invocation.MethodInvocationTarget.Returns(typeof(DefensiveInterceptorTestHelper).GetMethod("MethodWithBlockDefaultValuesAttribute"));
+            _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("MethodWithBlockDefaultValuesAttribute"));
 
             try
             {
@@ -59,7 +59,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
             }
             catch (DefaultParameterValuePreConditionException ex)
             {
-                ex.Message.Should().Contain("Method MethodWithBlockDefaultValuesAttribute of type DefensiveInterceptorTestHelper is called with default value on parameter firstParameter");
+                ex.Message.Should().Contain("Method MethodWithBlockDefaultValuesAttribute of type MethodValidationInterceptorTestHelper is called with default value on parameter firstParameter");
             }
         }
 
@@ -67,7 +67,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
         public void should_not_throw_exception_when_BlockDefaultValues_is_not_defined_and_more_than_one_parameter_value_is_default()
         {
             _invocation.Arguments.Returns(new object[] { 0, 2, 3 });
-            _invocation.MethodInvocationTarget.Returns(typeof(DefensiveInterceptorTestHelper).GetMethod("MethodWithoutBlockDefaultValuesAttribute"));
+            _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("MethodWithoutBlockDefaultValuesAttribute"));
 
             _sut.Intercept(_invocation);
         }
@@ -76,7 +76,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
         public void should_throw_BlockDefaultResultPostConditionException_when_method_is_decorated_with_BlockDefaultResultAttribute_and_default_value_is_returned()
         {
 
-            _invocation.MethodInvocationTarget.Returns(typeof(DefensiveInterceptorTestHelper).GetMethod("MethodWithBlockDefaultResultAttribute"));
+            _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("MethodWithBlockDefaultResultAttribute"));
             _invocation.ReturnValue = 0;
             
             try
@@ -87,21 +87,21 @@ namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
             }
             catch (DefaultResultPostConditionException ex)
             {
-                ex.Message.Should().Contain("Method MethodWithBlockDefaultResultAttribute of type DefensiveInterceptorTestHelper cannot return default value");
+                ex.Message.Should().Contain("Method MethodWithBlockDefaultResultAttribute of type MethodValidationInterceptorTestHelper cannot return default value");
             }
         }
 
         [Test]
         public void should_not_throw_exception_when_method_is_not_decorated_with_BlockDefaultResultAttribute_and_default_value_is_returned()
         {
-            _invocation.MethodInvocationTarget.Returns(typeof(DefensiveInterceptorTestHelper).GetMethod("MethodWithoutBlockDefaultResultAttribute"));
+            _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("MethodWithoutBlockDefaultResultAttribute"));
             _invocation.ReturnValue = 0;
             
             _sut.Intercept(_invocation);
         }
     }
 
-    public class DefensiveInterceptorTestHelper
+    public class MethodValidationInterceptorTestHelper
     {
         [BlockDefaultParameterValues]
         public void MethodWithBlockDefaultValuesAttribute(int firstParameter, int secondParameter)

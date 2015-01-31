@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 using System.Reflection;
 using WiseInterceptor.Interceptors.Common;
 
-namespace WiseInterceptor.Interceptors.Defensive
+namespace WiseInterceptor.Interceptors.MethodValidation
 {
-    public class DefensiveInterceptor:IInterceptor
+    public class MethodValidationInterceptor:IInterceptor
     {
         IHelper _helper;
-        
-        public DefensiveInterceptor()
+
+        public MethodValidationInterceptor()
         {
             _helper = new Helper();
         }

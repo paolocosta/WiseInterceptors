@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptor.Interceptors.Common;
 
-namespace WiseInterceptor.Interceptors.Defensive
+namespace WiseInterceptor.Interceptors.MethodValidation
 {
     public class DefaultParameterValuePreConditionException:ApplicationException
     {

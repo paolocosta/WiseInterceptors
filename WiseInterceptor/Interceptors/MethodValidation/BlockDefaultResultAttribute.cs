@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WiseInterceptor.Interceptors.Defensive
+namespace WiseInterceptor.Interceptors.MethodValidation
 {
     public class BlockDefaultResultAttribute:Attribute
     {

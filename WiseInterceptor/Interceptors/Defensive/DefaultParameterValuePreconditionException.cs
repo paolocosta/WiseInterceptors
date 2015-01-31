@@ -9,9 +9,9 @@ using WiseInterceptor.Utilities;
 
 namespace WiseInterceptor.Interceptors.Defensive
 {
-    public class BlockDefaultValuePreconditionViolatedException:ApplicationException
+    public class DefaultParameterValuePreConditionException:ApplicationException
     {
-        public BlockDefaultValuePreconditionViolatedException(IInvocation invocation, IHelper helper)
+        public DefaultParameterValuePreConditionException(IInvocation invocation, IHelper helper)
             : base(GetExceptionDescription(invocation, helper))
         {
         }

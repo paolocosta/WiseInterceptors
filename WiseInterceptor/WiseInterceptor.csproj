@@ -66,8 +66,8 @@
     <Compile Include="Interceptors\Defensive\BlockDefaultResultAttribute.cs" />
     <Compile Include="Interceptors\Defensive\BlockDefaultValuesAttribute.cs" />
     <Compile Include="Interceptors\Defensive\DefensiveInterceptor.cs" />
-    <Compile Include="Interceptors\Defensive\NoDefaultResultPostConditionException.cs" />
-    <Compile Include="Interceptors\Defensive\PreconditionViolatedException.cs" />
+    <Compile Include="Interceptors\Defensive\DefaultResultPostConditionException.cs" />
+    <Compile Include="Interceptors\Defensive\DefaultParameterValuePreConditionException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Utils.cs" />
   </ItemGroup>

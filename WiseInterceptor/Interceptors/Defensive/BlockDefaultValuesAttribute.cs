@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WiseInterceptor.Interceptors.Defensive
 {
-    public class BlockDefaultValuesAttribute:Attribute
+    public class BlockDefaultParameterValuesAttribute:Attribute
     {
     }
 }

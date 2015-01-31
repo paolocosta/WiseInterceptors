@@ -28,11 +28,11 @@ namespace WiseInterceptor.Interceptors.Defensive
 
         private void CheckPreconditions(IInvocation invocation)
         {
-            if (_helper.HasInvocationAttribute<BlockDefaultValuesAttribute>(invocation))
+            if (_helper.HasInvocationAttribute<BlockDefaultParameterValuesAttribute>(invocation))
             {
                 if (invocation.Arguments.Where(p => p.Equals(_helper.GetDefaultValue(p.GetType()))).Any())
                 {
-                    throw new BlockDefaultValuePreconditionViolatedException(invocation, _helper);
+                    throw new DefaultParameterValuePreConditionException(invocation, _helper);
                 }
             }
         }
@@ -43,11 +43,9 @@ namespace WiseInterceptor.Interceptors.Defensive
             {
                 if (invocation.ReturnValue.Equals(_helper.GetDefaultValue(invocation.ReturnValue.GetType())))
                 {
-                    throw new NoDefaultResultPostConditionException(invocation, _helper);
+                    throw new DefaultResultPostConditionException(invocation, _helper);
                 }
             }
         }
-
-        
     }
 }

@@ -8,9 +8,9 @@ using WiseInterceptor.Interceptors.Common;
 
 namespace WiseInterceptor.Interceptors.Defensive
 {
-    public class NoDefaultResultPostConditionException:Exception
+    public class DefaultResultPostConditionException:Exception
     {
-        public NoDefaultResultPostConditionException(IInvocation invocation, IHelper helper)
+        public DefaultResultPostConditionException(IInvocation invocation, IHelper helper)
             : base(GetExceptionDescription(invocation, helper))
         {
         }

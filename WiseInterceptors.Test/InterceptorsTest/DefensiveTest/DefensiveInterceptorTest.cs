@@ -28,10 +28,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
         [Test]
         public void should_not_throw_exception_when_method_has_no_parameters()
         {
-            
-            _invocation.Method.Returns(Substitute.For<MethodInfo>());
-
-            _invocation.Method.GetParameters().Returns(new ParameterInfo[0]);
+            _invocation.MethodInvocationTarget.Returns(typeof(DefensiveInterceptorTestHelper).GetMethod("MethodWithNoParameters"));
 
             _sut.Intercept(_invocation);
 
@@ -86,6 +83,11 @@ namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
         }
 
         public void MethodWithoutBlockDefaultValuesAttribute(int firstParameter, int secondParameter)
+        {
+
+        }
+
+        public void MethodWithNoParameters()
         {
 
         }

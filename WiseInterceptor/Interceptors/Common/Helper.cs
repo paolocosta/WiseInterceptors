@@ -49,5 +49,10 @@ namespace WiseInterceptor.Interceptors.Common
             }
             return null;
         }
+
+        public bool HasInvocationAttribute<T>(IInvocation invocation) where T : Attribute
+        {
+            return invocation.MethodInvocationTarget.GetCustomAttributes(typeof(T), false).Any();
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace WiseInterceptor.Interceptors.Defensive
 
         private void CheckPreconditions(IInvocation invocation)
         {
-            if (invocation.Arguments.Count() > 0 && invocation.MethodInvocationTarget.GetCustomAttributes<BlockDefaultValuesAttribute>().Count() > 0)
+            if (_helper.HasInvocationAttribute<BlockDefaultValuesAttribute>(invocation))
             {
                 if (invocation.Arguments.Where(p => p.Equals(_helper.GetDefaultValue(p.GetType()))).Any())
                 {

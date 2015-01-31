@@ -1,7 +1,13 @@
 # WiseInterceptors
 
-This project implements various Aspect Oriented Programming patterns.
+This project implements some C# interceptors.
 
-Currently there are: a circuit breaker, a cache and a method validation interceptor.
+Currently we have:
 
-The goal is to have a complete suite of easily configurable interceptors as a starter kit for an enterprise project.
+ 1. A circuit breaker interceptor. 
+ 
+ 2. A cache interceptor.
+
+ 3. A method validation interceptor.
+
+The goal is to have a complete suite of easily configurable interceptors as a starter kit for enterprise projects.

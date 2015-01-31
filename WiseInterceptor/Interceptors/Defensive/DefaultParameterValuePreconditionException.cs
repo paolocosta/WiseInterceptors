@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptor.Interceptors.Common;
-using WiseInterceptor.Utilities;
 
 namespace WiseInterceptor.Interceptors.Defensive
 {

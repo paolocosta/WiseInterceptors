@@ -5,6 +5,7 @@ using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptor;
+using WiseInterceptor.Interceptors.Common;
 
 namespace CircuitBreakerDemo
 {

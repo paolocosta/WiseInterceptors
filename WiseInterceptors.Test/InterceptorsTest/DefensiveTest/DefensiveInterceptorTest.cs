@@ -9,7 +9,6 @@ using System.Reflection;
 using NUnit.Framework;
 using WiseInterceptor.Interceptors.Defensive;
 using FluentAssertions;
-using WiseInterceptor.Utilities;
 
 namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
 {

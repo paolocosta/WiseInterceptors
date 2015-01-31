@@ -72,6 +72,22 @@ namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
 
             _sut.Intercept(_invocation);
         }
+
+        [Test]
+        public void should_throw_BlockDefaultResultPostConditionException_when_method_is_decorated_with_BlockDefaultResultAttribute_and_default_value_is_returned()
+        {
+            try
+            {
+                _invocation.MethodInvocationTarget.Returns(typeof(DefensiveInterceptorTestHelper).GetMethod("MethodWithBlockDefaultResultAttribute"));
+                _invocation.ReturnValue = 0;
+                _sut.Intercept(_invocation);
+                Assert.Fail();
+            }
+            catch (NoDefaultResultPostConditionException ex)
+            {
+                ex.Message.Should().Contain("Method MethodWithBlockDefaultResultAttribute of type DefensiveInterceptorTestHelper cannot return default value");
+            }
+        }
     }
 
     public class DefensiveInterceptorTestHelper
@@ -80,6 +96,12 @@ namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
         public void MethodWithBlockDefaultValuesAttribute(int firstParameter, int secondParameter)
         { 
         
+        }
+
+        [BlockDefaultResult]
+        public int MethodWithBlockDefaultResultAttribute(int firstParameter, int secondParameter)
+        {
+            return 0;
         }
 
         public void MethodWithoutBlockDefaultValuesAttribute(int firstParameter, int secondParameter)
@@ -93,3 +115,4 @@ namespace WiseInterceptors.Test.InterceptorsTest.DefensiveTest
         }
     }
 }
+

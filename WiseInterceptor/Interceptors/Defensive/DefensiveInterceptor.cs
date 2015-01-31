@@ -22,7 +22,8 @@ namespace WiseInterceptor.Interceptors.Defensive
         public void Intercept(IInvocation invocation)
         {
             CheckPreconditions(invocation);
-            invocation.Proceed();   
+            invocation.Proceed();
+            CheckPostConditions(invocation);    
         }
 
         private void CheckPreconditions(IInvocation invocation)
@@ -35,5 +36,18 @@ namespace WiseInterceptor.Interceptors.Defensive
                 }
             }
         }
+
+        private void CheckPostConditions(IInvocation invocation)
+        {
+            if (_helper.HasInvocationAttribute<BlockDefaultResultAttribute>(invocation))
+            {
+                if (invocation.ReturnValue.Equals(_helper.GetDefaultValue(invocation.ReturnValue.GetType())))
+                {
+                    throw new NoDefaultResultPostConditionException(invocation, _helper);
+                }
+            }
+        }
+
+        
     }
 }

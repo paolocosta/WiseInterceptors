@@ -12,16 +12,18 @@ namespace WiseInterceptor.Interceptors.Cache
     {
         ICache _Cache;
         IHelper _helper;
+        ICacheSettingsReader _cacheSettingsReader;
 
-        public CacheInterceptor(ICache cache, IHelper helper)
+        public CacheInterceptor(ICache cache, IHelper helper, ICacheSettingsReader cacheSettingsReader)
         {
             _Cache = cache;
-            _helper = helper;  
+            _helper = helper;
+            _cacheSettingsReader = cacheSettingsReader;
         }
 
         public void Intercept(IInvocation invocation)
         {
-            CacheSettingsAttribute settings = _helper.GetInvocationMethodAttribute<CacheSettingsAttribute>(invocation);
+            CacheSettings settings = _cacheSettingsReader.GetSettings(invocation.MethodInvocationTarget, invocation.Arguments);
             
             if (settings == null)
             {

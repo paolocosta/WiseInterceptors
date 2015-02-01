@@ -13,6 +13,7 @@ using WiseInterceptor;
 using NSubstitute;
 using Castle.DynamicProxy;
 using WiseInterceptor.Common;
+using System.Reflection;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 {
@@ -27,14 +28,17 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         public void Setup()
         {
             var builder = new ContainerBuilder();
-
+            var cacheSettingsReader = Substitute.For<ICacheSettingsReader>();
+            cacheSettingsReader.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
+                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal });
+            
             var timeProvider = Substitute.For<TimeProvider>();
             TimeProvider.Current = timeProvider;
             TimeProvider.Current.UtcNow.Returns(DateTime.MinValue);
             
-            
             builder.RegisterModule<InterceptorModule>();
             builder.RegisterType<CacheStub>().As<ICache>();
+            builder.Register(c => cacheSettingsReader).As<ICacheSettingsReader>();
             //builder.Register(c => new CacheInterceptor(_Cache));
 
             builder.RegisterType<Cachable>()
@@ -131,11 +135,13 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
                 .Do(x => calls = Tuple.Create(calls.Item1, calls.Item2 + 1));
 
             var helper = Substitute.For<IHelper>();
-            helper.GetInvocationMethodAttribute<CacheSettingsAttribute>(Arg.Any<IInvocation>())
-                .Returns(new CacheSettingsAttribute { Duration = 20 * 60, Priority = PriorityEnum.Normal });
             helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
 
-            var interceptor = new CacheInterceptor(cache, helper);
+            var cacheSettingsReader = Substitute.For<ICacheSettingsReader>();
+            cacheSettingsReader.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
+                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal }); 
+            
+            var interceptor = new CacheInterceptor(cache, helper, cacheSettingsReader);
             
             interceptor.Intercept(invocation);
 
@@ -148,15 +154,12 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
     {
         public string Name { get; set; }
 
-        [CacheSettings]
-
         public virtual string Hello(string arg)
         {
             return Name;
         }
 
         //This nonsense method is intended to test the unhappy case
-        [CacheSettings]
         public virtual void DoNothing()
         {
             

@@ -4,16 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptor.Interceptors.CircuitBreaker;
+using System.Reflection;
 
 namespace CircuitBreakerDemo
 {
     public class Breakable 
     {
-        [CircuitBreakerSettings(
-            ExceptionType = typeof(Exception), 
-            RetryingPeriodInSeconds=60, 
-            BreakingPeriodInSeconds=10, 
-            ExceptionsBeforeBreak=3)]
+        [CircuitBreakable]
         public virtual string HopeGetSomething()
         {
             DateTime now = DateTime.Now;
@@ -23,6 +20,28 @@ namespace CircuitBreakerDemo
                 throw new TimeoutException();
             }
             return "ok";
+        }
+    }
+
+    public class CircuitBreakableAttribute:Attribute
+    { }
+
+    public class CircuitBreakerSettingsReader : ICircuitBreakerSettingsReader
+    {
+        public CircuitBreakerSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
+        {
+            if (method.GetCustomAttributes<CircuitBreakableAttribute>().Any())
+            {
+                return new CircuitBreakerSettings
+                {
+                    RetryingPeriodInSeconds = 30,
+                    ExceptionType = typeof(Exception),
+                    ExceptionsBeforeBreak = 3,
+                    BreakingPeriodInSeconds = 30
+                };
+            }
+            else
+                return null;
         }
     }
 }

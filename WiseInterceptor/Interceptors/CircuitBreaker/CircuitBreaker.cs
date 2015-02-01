@@ -15,7 +15,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
 
     internal class CircuitBreaker
     {
-        internal CircuitBreakerSettingsAttribute Configuration { get; set; }
+        internal CircuitBreakerSettings Configuration { get; set; }
         internal DateTime CreationDate { get; set; }
         internal DateTime BreakDate { get; set; }
         internal int Retries { get; set; }

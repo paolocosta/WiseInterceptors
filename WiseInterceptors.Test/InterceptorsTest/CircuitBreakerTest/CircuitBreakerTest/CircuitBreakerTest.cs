@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using WiseInterceptor.Common;
 using WiseInterceptor.Interceptors.CircuitBreaker;
 using NSubstitute;
+using System.Reflection;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreakerTest
 {
@@ -22,9 +23,20 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         {
             
             var builder = new ContainerBuilder();
-           
+
+            var circuitBreakerSettingsReader = Substitute.For<ICircuitBreakerSettingsReader>();
+            
+            circuitBreakerSettingsReader.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>()).Returns(new CircuitBreakerSettings
+            {
+                BreakingPeriodInSeconds = 30,
+                ExceptionsBeforeBreak = 3,
+                ExceptionType = typeof(Exception),
+                RetryingPeriodInSeconds = 30
+            });
+            
             builder.RegisterModule<InterceptorModule>();
             builder.RegisterType<CacheStub>().As<ICache>();
+            builder.Register(c => circuitBreakerSettingsReader).As<ICircuitBreakerSettingsReader>();
             builder.RegisterType<Breakable>()
             .EnableClassInterceptors()
             .InterceptedBy(typeof(CircuitBreakerInterceptor));
@@ -174,11 +186,6 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
 
     public class Breakable 
     {
-        [CircuitBreakerSettings(
-            ExceptionType = typeof(Exception), 
-            RetryingPeriodInSeconds = 60, 
-            BreakingPeriodInSeconds = 60, 
-            ExceptionsBeforeBreak = 3)]
         public virtual void Call(bool raiseException)
         {
             if(raiseException)

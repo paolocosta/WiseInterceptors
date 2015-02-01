@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace WiseInterceptor.Interceptors.CircuitBreaker
 {
-    public class CircuitBreakerSettingsAttribute:Attribute
+    public class CircuitBreakerSettings
     {
-        public CircuitBreakerSettingsAttribute()
+        public CircuitBreakerSettings()
         {
             ExceptionsBeforeBreak = 3;
             RetryingPeriodInSeconds = 60;
@@ -40,11 +40,5 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
         /// Type of exception (or derived from) that will trigger the circuit breaker
         /// </summary>
         public Type ExceptionType { get; set; }
-
-        /// <summary>
-        /// Comma separated list of method whose value will be used to 
-        /// identify the circuit breaker
-        /// </summary>
-        public int VaryByMethodArgs { get; set; }
     }
 }

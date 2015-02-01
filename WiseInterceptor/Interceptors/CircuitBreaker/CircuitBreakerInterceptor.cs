@@ -14,17 +14,21 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
     {
         ICache _Cache;
         IHelper _helper;
+        ICircuitBreakerSettingsReader _circuitBreakerSettingsReader;
 
-        public CircuitBreakerInterceptor(ICache cache, IHelper helper)
+        public CircuitBreakerInterceptor(ICache cache, IHelper helper, ICircuitBreakerSettingsReader circuitBreakerSettingsReader)
         {
             _Cache = cache;
             _helper = helper;
+            _circuitBreakerSettingsReader = circuitBreakerSettingsReader;
         }
 
         public void Intercept(IInvocation invocation)
         {
             var settings = GetCircuitBreakerSettings(invocation);
-            if (settings != null)
+            if(settings==null)
+                invocation.Proceed();
+            else
             {
                 var circuitBreaker = GetCurrentCircuitBreaker(invocation);
                 try
@@ -50,7 +54,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
             }
         }
 
-        private void HandleMethodException(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker, Exception ex)
+        private void HandleMethodException(IInvocation invocation, CircuitBreakerSettings settings, CircuitBreaker circuitBreaker, Exception ex)
         {
             if (circuitBreaker == null)
             {
@@ -73,7 +77,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
             _Cache.Insert(_helper.GetMethodIdentifier(invocation), circuitBreaker, TimeProvider.Current.UtcNow.AddYears(1));
         }
 
-        private CircuitBreaker CreateNewCircuitBreaker(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker, Exception ex)
+        private CircuitBreaker CreateNewCircuitBreaker(IInvocation invocation, CircuitBreakerSettings settings, CircuitBreaker circuitBreaker, Exception ex)
         {
             if (IsSameOrSubClassAsSettings(settings, ex))
             {
@@ -94,7 +98,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
             return circuitBreaker;
         }
 
-        private static bool IsSameOrSubClassAsSettings(CircuitBreakerSettingsAttribute settings, Exception ex)
+        private static bool IsSameOrSubClassAsSettings(CircuitBreakerSettings settings, Exception ex)
         {
             return ex.GetType().IsSubclassOf(settings.ExceptionType) || ex.GetType() == settings.ExceptionType;
         }
@@ -112,7 +116,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
             }
         }
 
-        private void ManageExistingCircuitBreaker(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker)
+        private void ManageExistingCircuitBreaker(IInvocation invocation, CircuitBreakerSettings settings, CircuitBreaker circuitBreaker)
         {
             if (circuitBreaker.Status == CircuitBreakerStatusEnum.Breaked && circuitBreaker.BreakDate.AddSeconds(settings.BreakingPeriodInSeconds) < TimeProvider.Current.UtcNow)
             {
@@ -124,7 +128,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
             }
         }
 
-        private void MoveToBreakableForANewTentative(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker)
+        private void MoveToBreakableForANewTentative(IInvocation invocation, CircuitBreakerSettings settings, CircuitBreaker circuitBreaker)
         {
             circuitBreaker.Status = CircuitBreakerStatusEnum.Breakable;
             circuitBreaker.Retries -= 1;
@@ -139,12 +143,9 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
             return circuitBreaker;
         }
 
-        private static CircuitBreakerSettingsAttribute GetCircuitBreakerSettings(IInvocation invocation)
+        private CircuitBreakerSettings GetCircuitBreakerSettings(IInvocation invocation)
         {
-            MethodInfo methodInfo = invocation.MethodInvocationTarget;
-            var settings = methodInfo.GetCustomAttributes(typeof(CircuitBreakerSettingsAttribute), true).SingleOrDefault()
-                as CircuitBreakerSettingsAttribute;
-            return settings;
+            return _circuitBreakerSettingsReader.GetSettings(invocation.MethodInvocationTarget, invocation.Arguments);
         }
     }
 }

@@ -43,6 +43,8 @@ namespace CircuitBreakerDemo
             var builder = new ContainerBuilder();
             builder.RegisterModule<InterceptorModule>();
             builder.RegisterType<Cache>().As<ICache>();
+            builder.RegisterType<CircuitBreakerSettingsReader>().As<ICircuitBreakerSettingsReader>();
+            
 
             builder.RegisterType<Breakable>()
             .EnableClassInterceptors()

@@ -65,6 +65,7 @@
     <Compile Include="Interceptors\CircuitBreaker\CircuitBreakerSettings.cs" />
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\IHelper.cs" />
+    <Compile Include="Interceptors\CircuitBreaker\ICircuitBreakerSettingsReader.cs" />
     <Compile Include="Interceptors\MethodValidation\IMethodValidationSettingsResolver.cs" />
     <Compile Include="Interceptors\MethodValidation\MethodValidationInterceptor.cs" />
     <Compile Include="Interceptors\MethodValidation\DefaultResultPostConditionException.cs" />

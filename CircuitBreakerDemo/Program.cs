@@ -11,7 +11,6 @@ using WiseInterceptor.Common;
 
 namespace CircuitBreakerDemo
 {
-
     class Program
     {
         static void Main(string[] args)

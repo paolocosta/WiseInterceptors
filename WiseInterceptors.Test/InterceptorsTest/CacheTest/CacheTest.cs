@@ -21,8 +21,10 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
     public class CacheTest
     {
         CacheStub _Cache;
+        private IContainer _container;
 
-        private IContainer BuildContainer()
+        [SetUp]
+        public void Setup()
         {
             var builder = new ContainerBuilder();
 
@@ -39,15 +41,13 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             .EnableClassInterceptors()
             .InterceptedBy(typeof(CacheInterceptor));
 
-            var container = builder.Build();
-            return container;
+            _container = builder.Build();
         }
 
         [Test]
         public void two_near_identical_subsequent_call_should_return_the_same_result_even_if_the_value_changes()
         {
-            var container = BuildContainer();
-            var cachable = container.Resolve<Cachable>();
+            var cachable = _container.Resolve<Cachable>();
             var name = Tuple.Create("Stale","Actual");
             var lastName = "Last Name";
             
@@ -63,8 +63,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         [Test]
         public void two_distant_identical_subsequent_call_should_return_different_results_if_the_value_changes()
         {
-            var container = BuildContainer();
-            var cachable = container.Resolve<Cachable>();
+            var cachable = _container.Resolve<Cachable>();
             var name = Tuple.Create("Stale", "Actual");
             var lastName = "Last Name";
 
@@ -77,12 +76,11 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             firstResult.Should().NotBe(secondResult);
         }
-
+       
         [Test]
         public void two_distinct_subsequent_call_should_return_different_results_if_the_the_method_args_are_different_and_of_course_the_query_result_changes()
         {
-            var container = BuildContainer();
-            var cachable = container.Resolve<Cachable>();
+            var cachable = _container.Resolve<Cachable>();
             var name = Tuple.Create("Stale", "Actual");
             var args = Tuple.Create("args1", "args2");
 
@@ -100,9 +98,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         [ExpectedException(typeof(InvalidOperationException))]
         public void void_method_decorated_with_cache_should_return_exception()
         {
-            var container = BuildContainer();
-            
-            var cachable = container.Resolve<Cachable>();
+            var cachable = _container.Resolve<Cachable>();
             
             cachable.DoNothing();
         }

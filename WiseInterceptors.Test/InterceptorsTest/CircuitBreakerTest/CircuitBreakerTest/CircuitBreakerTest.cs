@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptor.Common;
 using WiseInterceptor.Interceptors.CircuitBreaker;
-
+using NSubstitute;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreakerTest
 {
@@ -76,7 +76,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
                 {
                     exceptions.Add(ex);
                 }
-                TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddSeconds(1));
+                TimeProvider.Current.UtcNow.Returns(TimeProvider.Current.UtcNow.AddSeconds(1));
             }
             Assert.IsTrue(exceptions.Where(x => x.GetType() == typeof(TimeoutException)).Count() == 3);
         }
@@ -100,7 +100,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
                 {
                     exceptions.Add(i, ex);
                 }
-                TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddSeconds(1));
+                TimeProvider.Current.UtcNow.Returns(TimeProvider.Current.UtcNow.AddSeconds(1));
             }
 
             Assert.IsTrue(
@@ -129,9 +129,9 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
                     exceptions.Add(i, ex);
                 }
                 if(i < 2)
-                    TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddSeconds(1));
+                    TimeProvider.Current.UtcNow.Returns(TimeProvider.Current.UtcNow.AddSeconds(1));
                 else
-                    TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddMinutes(2));
+                    TimeProvider.Current.UtcNow.Returns(TimeProvider.Current.UtcNow.AddMinutes(2));
             }
 
             Assert.IsTrue(
@@ -159,9 +159,9 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
                     exceptions.Add(i, ex);
                 }
                 if (i < 3)
-                    TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddSeconds(1));
+                    TimeProvider.Current.UtcNow.Returns(TimeProvider.Current.UtcNow.AddSeconds(1));
                 else
-                    TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddMinutes(2));
+                    TimeProvider.Current.UtcNow.Returns(TimeProvider.Current.UtcNow.AddMinutes(2));
             }
 
             Assert.IsTrue(

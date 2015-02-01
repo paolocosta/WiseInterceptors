@@ -24,8 +24,6 @@ namespace WiseInterceptor.Common
             }
         }
 
-        public abstract void SetCurrentTime(DateTime time);
-
         public abstract DateTime UtcNow { get; }
 
         public static void ResetToDefault()
@@ -44,11 +42,6 @@ namespace WiseInterceptor.Common
         public override DateTime UtcNow
         {
             get { return DateTime.UtcNow; }
-        }
-
-        public override void SetCurrentTime(DateTime time)
-        {
-            throw new InvalidOperationException("Cannot set current time on default time provider");
         }
 
         public static DefaultTimeProvider Instance

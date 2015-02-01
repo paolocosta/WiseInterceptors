@@ -13,13 +13,13 @@ namespace CircuitBreakerDemo
             ExceptionType = typeof(Exception), 
             RetryingPeriodInSeconds=60, 
             BreakingPeriodInSeconds=10, 
-            ExceptionsBeforeBreak=5)]
+            ExceptionsBeforeBreak=3)]
         public virtual string HopeGetSomething()
         {
             DateTime now = DateTime.Now;
             if (now.Second < 30)
             {
-                System.Threading.Thread.Sleep(1000 * 3);
+                System.Threading.Thread.Sleep(1000 * 4);
                 throw new TimeoutException();
             }
             return "ok";

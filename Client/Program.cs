@@ -26,7 +26,7 @@ namespace CircuitBreakerDemo
                     var b = scope.Resolve<Breakable>();
                     try
                     {
-                        System.Threading.Thread.Sleep(100);
+                        System.Threading.Thread.Sleep(1000);
                         b.HopeGetSomething();
                         Console.WriteLine(string.Format("{0} OK", DateTime.Now.TimeOfDay.ToString()));
                     }
@@ -43,7 +43,6 @@ namespace CircuitBreakerDemo
             var builder = new ContainerBuilder();
             builder.RegisterModule<InterceptorModule>();
             builder.RegisterType<Cache>().As<ICache>();
-            builder.RegisterType<CircuitBreakerInterceptor>();
 
             builder.RegisterType<Breakable>()
             .EnableClassInterceptors()

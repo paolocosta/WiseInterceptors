@@ -14,10 +14,10 @@ namespace WiseInterceptor.Interceptors.MethodValidation
         IHelper _helper;
         IMethodValidationSettingsResolver _methodValidationSettingsResolver;
 
-        public MethodValidationInterceptor(IMethodValidationSettingsResolver methodValidationSettingsResolver)
+        public MethodValidationInterceptor(IMethodValidationSettingsResolver methodValidationSettingsResolver, IHelper helper)
         {
             _methodValidationSettingsResolver = methodValidationSettingsResolver;
-            _helper = new Helper();
+            _helper = helper;
         }
         
         public void Intercept(IInvocation invocation)

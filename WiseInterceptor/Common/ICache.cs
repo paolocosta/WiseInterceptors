@@ -14,7 +14,5 @@ namespace WiseInterceptor.Common
 
         void Remove(string Key);
 
-        DateTime Now();
-
     }
 }

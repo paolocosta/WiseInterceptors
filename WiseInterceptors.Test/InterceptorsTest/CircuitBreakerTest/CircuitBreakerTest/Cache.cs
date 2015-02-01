@@ -10,8 +10,6 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
 {
     internal class CacheStub : ICache
     {
-        public DateTime FakeNow { get; set; }
-
         Dictionary<string, Tuple<object, DateTime>> _Elements = new Dictionary<string, Tuple<object, DateTime>>();
 
         public void Insert(string Key, object Value, DateTime Expiration)
@@ -23,7 +21,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
 
         public object Get(string Key)
         {
-            if(_Elements.ContainsKey(Key) && Now() < _Elements[Key].Item2)
+            if (_Elements.ContainsKey(Key) && TimeProvider.Current.UtcNow < _Elements[Key].Item2)
             {
                 return _Elements[Key].Item1;
             }
@@ -33,11 +31,6 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         public void Remove(string Key)
         {
             _Elements.Remove(Key);
-        }
-
-        public DateTime Now()
-        {
-            return FakeNow;
         }
 
         public void Reset()

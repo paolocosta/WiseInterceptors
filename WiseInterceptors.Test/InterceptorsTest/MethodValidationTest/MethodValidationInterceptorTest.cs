@@ -9,6 +9,7 @@ using System.Reflection;
 using NUnit.Framework;
 using FluentAssertions;
 using WiseInterceptor.Interceptors.MethodValidation;
+using WiseInterceptor.Common;
 
 namespace WiseInterceptors.Test.InterceptorsTest.MethodValidationTest
 {
@@ -22,7 +23,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.MethodValidationTest
         public void Setup()
         {
             _methodValidationSettingsResolver = Substitute.For<IMethodValidationSettingsResolver>();
-            _sut = new MethodValidationInterceptor(_methodValidationSettingsResolver);
+            _sut = new MethodValidationInterceptor(_methodValidationSettingsResolver, new Helper());
             _invocation = Substitute.For<IInvocation>();
         }
 

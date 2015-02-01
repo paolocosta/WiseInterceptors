@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomTimeProvider.cs" />
     <Compile Include="InterceptorsTest\CacheTest\CacheTest.cs" />
     <Compile Include="InterceptorsTest\CircuitBreakerTest\CircuitBreakerTest\Cache.cs" />
     <Compile Include="InterceptorsTest\CircuitBreakerTest\CircuitBreakerTest\CircuitBreakerTest.cs" />

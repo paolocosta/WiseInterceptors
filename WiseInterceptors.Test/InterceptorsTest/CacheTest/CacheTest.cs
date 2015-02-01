@@ -25,12 +25,13 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         private IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
-
-            _Cache = new CacheStub();
-
-            _Cache.FakeNow = DateTime.MinValue;
-
-            builder.Register(c => new CacheInterceptor(_Cache));
+            
+            TimeProvider.Current = new CustomTimeProvider();
+            TimeProvider.Current.SetCurrentTime(DateTime.MinValue);
+            
+            builder.RegisterModule<InterceptorModule>();
+            builder.RegisterType<CacheStub>().As<ICache>();
+            //builder.Register(c => new CacheInterceptor(_Cache));
 
             builder.RegisterType<Cachable>()
             .EnableClassInterceptors()
@@ -51,7 +52,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             cachable.SetName(name.Item1);
             var firstResult = cachable.Hello(lastName);
             cachable.SetName(name.Item2);
-            _Cache.FakeNow = _Cache.FakeNow.AddMinutes(1);
+            TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddMinutes(1));
             var secondResult = cachable.Hello(lastName);
             
             firstResult.Should().Be(secondResult);
@@ -68,7 +69,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             cachable.SetName(name.Item1);
             var firstResult = cachable.Hello(lastName);
             cachable.SetName(name.Item2);
-            _Cache.FakeNow = _Cache.FakeNow.AddMinutes(21);
+            TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddMinutes(21));
             var secondResult = cachable.Hello(lastName);
 
             firstResult.Should().NotBe(secondResult);
@@ -85,7 +86,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             cachable.SetName(name.Item1);
             var firstResult = cachable.Hello(args.Item1);
             cachable.SetName(name.Item2);
-            _Cache.FakeNow = _Cache.FakeNow.AddMinutes(1);
+            TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddMinutes(1));
             var secondResult = cachable.Hello(args.Item2);
 
             firstResult.Should().NotBe(secondResult);
@@ -114,7 +115,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             invocation.ReturnValue.Returns(2);
 
             var cache = NSubstitute.Substitute.For<ICache>();
-            cache.Now().Returns(start);
+            TimeProvider.Current.SetCurrentTime(start);
             //Value returned from cache is sotly expired and equals 1
             cache.Get(Arg.Any<string>()).Returns(new CacheValue { ExpiryDate = start.AddSeconds(-1), Value = 1 });
 
@@ -133,8 +134,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
                 .Returns(new CacheSettingsAttribute { Duration = 20 * 60, Priority = PriorityEnum.Normal });
             helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
 
-            var interceptor = new CacheInterceptor(cache);
-            interceptor.Helper= helper;
+            var interceptor = new CacheInterceptor(cache, helper);
             
             interceptor.Intercept(invocation);
 

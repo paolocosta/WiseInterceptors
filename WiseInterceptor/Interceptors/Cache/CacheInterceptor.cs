@@ -11,17 +11,17 @@ namespace WiseInterceptor.Interceptors.Cache
     public class CacheInterceptor : IInterceptor
     {
         ICache _Cache;
-        public IHelper Helper { private get; set; }
+        IHelper _helper;
 
-        public CacheInterceptor(ICache cache)
+        public CacheInterceptor(ICache cache, IHelper helper)
         {
             _Cache = cache;
-            Helper = new Helper();  
+            _helper = helper;  
         }
 
         public void Intercept(IInvocation invocation)
         {
-            CacheSettingsAttribute settings = Helper.GetInvocationMethodAttribute<CacheSettingsAttribute>(invocation);
+            CacheSettingsAttribute settings = _helper.GetInvocationMethodAttribute<CacheSettingsAttribute>(invocation);
             
             if (settings == null)
             {
@@ -32,13 +32,13 @@ namespace WiseInterceptor.Interceptors.Cache
             {
                 CheckNotVoidReturnType(invocation);
 
-                var key = Helper.GetCallIdentifier(invocation);
+                var key = _helper.GetCallIdentifier(invocation);
                 var value = _Cache.Get(key) as CacheValue;
 
                 if (value != null)
                 {
                     //Check if the soft expiry date is valid
-                    if (value.ExpiryDate > _Cache.Now())
+                    if (value.ExpiryDate > TimeProvider.Current.UtcNow)
                     {
                         invocation.ReturnValue = value.Value;
                         return;
@@ -51,10 +51,10 @@ namespace WiseInterceptor.Interceptors.Cache
                             key,
                             new CacheValue
                             {
-                                ExpiryDate = _Cache.Now().AddYears(1),
+                                ExpiryDate = TimeProvider.Current.UtcNow.AddYears(1),
                                 Value = value.Value
                             },
-                            _Cache.Now().AddYears(1));
+                            TimeProvider.Current.UtcNow.AddYears(1));
                     }
                 }
 
@@ -66,17 +66,17 @@ namespace WiseInterceptor.Interceptors.Cache
                             key,
                             new CacheValue
                             {
-                                ExpiryDate = _Cache.Now().AddSeconds(settings.Duration),
+                                ExpiryDate = TimeProvider.Current.UtcNow.AddSeconds(settings.Duration),
                                 Value = invocation.ReturnValue
                             },
-                            _Cache.Now().AddSeconds(settings.Duration).AddMinutes(2));
+                            TimeProvider.Current.UtcNow.AddSeconds(settings.Duration).AddMinutes(2));
                 }
             }
         }
 
         private void CheckNotVoidReturnType(IInvocation invocation)
         {
-            if (Helper.IsReturnTypeVoid(invocation))
+            if (_helper.IsReturnTypeVoid(invocation))
             {
                 throw new InvalidOperationException(string.Format("Cache was added to method {0}.{1} but it is not allowed as it returns void",
                     invocation.Method.DeclaringType.FullName,

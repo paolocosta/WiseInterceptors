@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptor.Interceptors.CircuitBreaker;
 using Autofac.Extras.DynamicProxy2;
+using WiseInterceptor.Common;
 
 namespace CircuitBreakerDemo
 {
@@ -40,8 +41,9 @@ namespace CircuitBreakerDemo
         private static IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
-
-            builder.Register(c => new CircuitBreakerInterceptor(new Cache()));
+            builder.RegisterModule<InterceptorModule>();
+            builder.RegisterType<Cache>().As<ICache>();
+            builder.RegisterType<CircuitBreakerInterceptor>();
 
             builder.RegisterType<Breakable>()
             .EnableClassInterceptors()

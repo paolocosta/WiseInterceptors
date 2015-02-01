@@ -13,12 +13,12 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
     public class CircuitBreakerInterceptor:IInterceptor
     {
         ICache _Cache;
-        IHelper _Helper;
+        IHelper _helper;
 
-        public CircuitBreakerInterceptor(ICache cache)
+        public CircuitBreakerInterceptor(ICache cache, IHelper helper)
         {
             _Cache = cache;
-            _Helper = new Helper();
+            _helper = helper;
         }
 
         public void Intercept(IInvocation invocation)
@@ -67,10 +67,10 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
 
         private void BreakCircuit(IInvocation invocation, CircuitBreaker circuitBreaker)
         {
-            _Cache.Remove(_Helper.GetMethodIdentifier(invocation));
+            _Cache.Remove(_helper.GetMethodIdentifier(invocation));
             circuitBreaker.Status = CircuitBreakerStatusEnum.Breaked;
-            circuitBreaker.BreakDate = _Cache.Now();
-            _Cache.Insert(_Helper.GetMethodIdentifier(invocation), circuitBreaker, _Cache.Now().AddYears(1));
+            circuitBreaker.BreakDate = TimeProvider.Current.UtcNow;
+            _Cache.Insert(_helper.GetMethodIdentifier(invocation), circuitBreaker, TimeProvider.Current.UtcNow.AddYears(1));
         }
 
         private CircuitBreaker CreateNewCircuitBreaker(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker, Exception ex)
@@ -80,15 +80,15 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
                 circuitBreaker = new CircuitBreaker
                 {
                     Configuration = settings,
-                    CreationDate = _Cache.Now(),
+                    CreationDate = TimeProvider.Current.UtcNow,
                     BreakingException = ex,
                     BreakDate = DateTime.MinValue,
                     Retries = 0,
                     Status = CircuitBreakerStatusEnum.Breakable
                 };
 
-                _Cache.Insert(_Helper.GetMethodIdentifier(invocation),
-                    circuitBreaker, _Cache.Now().AddSeconds(settings.RetryingPeriodInSeconds)
+                _Cache.Insert(_helper.GetMethodIdentifier(invocation),
+                    circuitBreaker, TimeProvider.Current.UtcNow.AddSeconds(settings.RetryingPeriodInSeconds)
                     );
             }
             return circuitBreaker;
@@ -108,13 +108,13 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
         {
             if (circuitBreaker != null)
             {
-                _Cache.Remove(_Helper.GetMethodIdentifier(invocation));
+                _Cache.Remove(_helper.GetMethodIdentifier(invocation));
             }
         }
 
         private void ManageExistingCircuitBreaker(IInvocation invocation, CircuitBreakerSettingsAttribute settings, CircuitBreaker circuitBreaker)
         {
-            if (circuitBreaker.Status == CircuitBreakerStatusEnum.Breaked && circuitBreaker.BreakDate.AddSeconds(settings.BreakingPeriodInSeconds) < _Cache.Now())
+            if (circuitBreaker.Status == CircuitBreakerStatusEnum.Breaked && circuitBreaker.BreakDate.AddSeconds(settings.BreakingPeriodInSeconds) < TimeProvider.Current.UtcNow)
             {
                 MoveToBreakableForANewTentative(invocation, settings, circuitBreaker);
             }
@@ -128,14 +128,14 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
         {
             circuitBreaker.Status = CircuitBreakerStatusEnum.Breakable;
             circuitBreaker.Retries -= 1;
-            _Cache.Insert(_Helper.GetMethodIdentifier(invocation),
-                circuitBreaker, _Cache.Now().AddSeconds(settings.RetryingPeriodInSeconds)
+            _Cache.Insert(_helper.GetMethodIdentifier(invocation),
+                circuitBreaker, TimeProvider.Current.UtcNow.AddSeconds(settings.RetryingPeriodInSeconds)
                 );
         }
 
         private CircuitBreaker GetCurrentCircuitBreaker(IInvocation invocation)
         {
-            var circuitBreaker = _Cache.Get(_Helper.GetMethodIdentifier(invocation)) as CircuitBreaker;
+            var circuitBreaker = _Cache.Get(_helper.GetMethodIdentifier(invocation)) as CircuitBreaker;
             return circuitBreaker;
         }
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WiseInterceptor.Common;
 using WiseInterceptor.Interceptors.CircuitBreaker;
 
 
@@ -21,13 +22,9 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         {
             
             var builder = new ContainerBuilder();
-
-            _Cache = new CacheStub();
-
-            _Cache.FakeNow = DateTime.MinValue;
            
-            builder.Register(c => new CircuitBreakerInterceptor(_Cache));
-
+            builder.RegisterModule<InterceptorModule>();
+            builder.RegisterType<CacheStub>().As<ICache>();
             builder.RegisterType<Breakable>()
             .EnableClassInterceptors()
             .InterceptedBy(typeof(CircuitBreakerInterceptor));
@@ -79,7 +76,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
                 {
                     exceptions.Add(ex);
                 }
-                _Cache.FakeNow = _Cache.FakeNow.AddSeconds(1);
+                TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddSeconds(1));
             }
             Assert.IsTrue(exceptions.Where(x => x.GetType() == typeof(TimeoutException)).Count() == 3);
         }
@@ -103,7 +100,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
                 {
                     exceptions.Add(i, ex);
                 }
-                _Cache.FakeNow = _Cache.FakeNow.AddSeconds(1);
+                TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddSeconds(1));
             }
 
             Assert.IsTrue(
@@ -132,9 +129,9 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
                     exceptions.Add(i, ex);
                 }
                 if(i < 2)
-                    _Cache.FakeNow = _Cache.FakeNow.AddSeconds(1);
+                    TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddSeconds(1));
                 else
-                    _Cache.FakeNow = _Cache.FakeNow.AddMinutes(2);
+                    TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddMinutes(2));
             }
 
             Assert.IsTrue(
@@ -162,9 +159,9 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
                     exceptions.Add(i, ex);
                 }
                 if (i < 3)
-                    _Cache.FakeNow = _Cache.FakeNow.AddSeconds(1);
+                    TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddSeconds(1));
                 else
-                    _Cache.FakeNow = _Cache.FakeNow.AddMinutes(2);
+                    TimeProvider.Current.SetCurrentTime(TimeProvider.Current.UtcNow.AddMinutes(2));
             }
 
             Assert.IsTrue(

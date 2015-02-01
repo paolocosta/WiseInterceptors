@@ -45,7 +45,7 @@ namespace WiseInterceptor.Interceptors.CircuitBreaker
                 catch (Exception ex)
                 {
                     HandleMethodException(invocation, settings, circuitBreaker, ex);
-                    throw ex;
+                    throw;
                 }
             }
         }

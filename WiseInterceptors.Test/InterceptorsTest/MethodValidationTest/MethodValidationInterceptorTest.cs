@@ -16,17 +16,20 @@ namespace WiseInterceptors.Test.InterceptorsTest.MethodValidationTest
     {
         private MethodValidationInterceptor _sut;
         private IInvocation _invocation;
+        private IMethodValidationSettingsResolver _methodValidationSettingsResolver;
 
         [SetUp]
         public void Setup()
         {
-            _sut = new MethodValidationInterceptor();
+            _methodValidationSettingsResolver = Substitute.For<IMethodValidationSettingsResolver>();
+            _sut = new MethodValidationInterceptor(_methodValidationSettingsResolver);
             _invocation = Substitute.For<IInvocation>();
         }
 
         [Test]
         public void should_not_throw_exception_when_method_has_no_parameters()
         {
+            _methodValidationSettingsResolver.BlockDefaultValueParameters(Arg.Any<MethodInfo>(), Arg.Any<object[]>()).Returns(true);
             _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("MethodWithNoParameters"));
 
             _sut.Intercept(_invocation);
@@ -35,10 +38,11 @@ namespace WiseInterceptors.Test.InterceptorsTest.MethodValidationTest
         }
 
         [Test]
-        public void should_not_throw_exception_when_BlockDefaultValues_is_defined_and_all_paameter_values_are_not_default()
+        public void should_not_throw_exception_when_BlockDefaultValueParameters_returns_true_and_all_parameter_values_are_not_default()
         {
-            _invocation.Arguments.Returns(new object[] { 1, 2, 3 });
-            _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("MethodWithBlockDefaultValuesAttribute"));
+            _methodValidationSettingsResolver.BlockDefaultValueParameters(Arg.Any<MethodInfo>(), Arg.Any<object[]>()).Returns(true);
+            _invocation.Arguments.Returns(new object[] { 1, 2 });
+            //_invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("VoidMethod"));
 
             _sut.Intercept(_invocation);
 
@@ -46,10 +50,11 @@ namespace WiseInterceptors.Test.InterceptorsTest.MethodValidationTest
         }
 
         [Test]
-        public void should_throw_exception_when_BlockDefaultValues_is_defined_and_at_least_one_parameter_value_is_default()
+        public void should_throw_exception_when_BlockDefaultValueParameters_returns_true_and_at_least_one_parameter_value_is_default()
         {
-            _invocation.Arguments.Returns(new object[] { 0, 2, 3 });
-            _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("MethodWithBlockDefaultValuesAttribute"));
+            _methodValidationSettingsResolver.BlockDefaultValueParameters(Arg.Any<MethodInfo>(), Arg.Any<object[]>()).Returns(true);   
+            _invocation.Arguments.Returns(new object[] { 0, 2 });
+            _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("VoidMethod"));
 
             try
             {
@@ -59,24 +64,24 @@ namespace WiseInterceptors.Test.InterceptorsTest.MethodValidationTest
             }
             catch (DefaultParameterValuePreConditionException ex)
             {
-                ex.Message.Should().Contain("Method MethodWithBlockDefaultValuesAttribute of type MethodValidationInterceptorTestHelper is called with default value on parameter firstParameter");
+                ex.Message.Should().Contain("Method VoidMethod of type MethodValidationInterceptorTestHelper is called with default value on parameter p1");
             }
         }
 
         [Test]
-        public void should_not_throw_exception_when_BlockDefaultValues_is_not_defined_and_more_than_one_parameter_value_is_default()
+        public void should_not_throw_exception_when_BlockDefaultValueParameters_returns_false_and_more_than_one_parameter_value_is_default()
         {
+            _methodValidationSettingsResolver.BlockDefaultValueParameters(Arg.Any<MethodInfo>(), Arg.Any<object[]>()).Returns(false);
             _invocation.Arguments.Returns(new object[] { 0, 2, 3 });
-            _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("MethodWithoutBlockDefaultValuesAttribute"));
-
+            
             _sut.Intercept(_invocation);
         }
 
         [Test]
-        public void should_throw_BlockDefaultResultPostConditionException_when_method_is_decorated_with_BlockDefaultResultAttribute_and_default_value_is_returned()
+        public void should_throw_BlockDefaultResultPostConditionException_when_BlockDefaultResult_returns_true_and_default_value_is_returned()
         {
-
-            _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("MethodWithBlockDefaultResultAttribute"));
+            _methodValidationSettingsResolver.BlockDefaultResult(Arg.Any<MethodInfo>(), Arg.Any<object[]>()).Returns(true);
+            _invocation.MethodInvocationTarget.Returns(typeof(MethodValidationInterceptorTestHelper).GetMethod("MethodThatReturnsDefaultValue"));
             _invocation.ReturnValue = 0;
             
             try
@@ -87,7 +92,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.MethodValidationTest
             }
             catch (DefaultResultPostConditionException ex)
             {
-                ex.Message.Should().Contain("Method MethodWithBlockDefaultResultAttribute of type MethodValidationInterceptorTestHelper cannot return default value");
+                ex.Message.Should().Contain("Method MethodThatReturnsDefaultValue of type MethodValidationInterceptorTestHelper cannot return default value");
             }
         }
 
@@ -103,29 +108,18 @@ namespace WiseInterceptors.Test.InterceptorsTest.MethodValidationTest
 
     public class MethodValidationInterceptorTestHelper
     {
-        [BlockDefaultParameterValues]
-        public void MethodWithBlockDefaultValuesAttribute(int firstParameter, int secondParameter)
-        { 
+        public void VoidMethod(int p1, int p2)
+        {
         }
 
-        [BlockDefaultResult]
-        public int MethodWithBlockDefaultResultAttribute(int firstParameter, int secondParameter)
+        public int MethodThatReturnsNotDefaultValue()
+        {
+            return 1;
+        }
+
+        public int MethodThatReturnsDefaultValue()
         {
             return 0;
-        }
-
-        public void MethodWithoutBlockDefaultValuesAttribute(int firstParameter, int secondParameter)
-        {
-        }
-
-        public int MethodWithoutBlockDefaultResultAttribute(int firstParameter, int secondParameter)
-        {
-            return 0;
-        }
-
-        [BlockDefaultParameterValues]
-        public void MethodWithNoParameters()
-        {
         }
     }
 }

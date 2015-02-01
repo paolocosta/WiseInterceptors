@@ -63,8 +63,7 @@
     <Compile Include="Interceptors\CircuitBreaker\CircuitBreakerSettings.cs" />
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\IHelper.cs" />
-    <Compile Include="Interceptors\MethodValidation\BlockDefaultResultAttribute.cs" />
-    <Compile Include="Interceptors\MethodValidation\BlockDefaultValuesAttribute.cs" />
+    <Compile Include="Interceptors\MethodValidation\IMethodValidationSettingsResolver.cs" />
     <Compile Include="Interceptors\MethodValidation\MethodValidationInterceptor.cs" />
     <Compile Include="Interceptors\MethodValidation\DefaultResultPostConditionException.cs" />
     <Compile Include="Interceptors\MethodValidation\DefaultParameterValuePreConditionException.cs" />

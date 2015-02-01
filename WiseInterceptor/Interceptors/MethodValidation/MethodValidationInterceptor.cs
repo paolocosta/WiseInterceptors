@@ -12,9 +12,11 @@ namespace WiseInterceptor.Interceptors.MethodValidation
     public class MethodValidationInterceptor:IInterceptor
     {
         IHelper _helper;
+        IMethodValidationSettingsResolver _methodValidationSettingsResolver;
 
-        public MethodValidationInterceptor()
+        public MethodValidationInterceptor(IMethodValidationSettingsResolver methodValidationSettingsResolver)
         {
+            _methodValidationSettingsResolver = methodValidationSettingsResolver;
             _helper = new Helper();
         }
         
@@ -27,7 +29,7 @@ namespace WiseInterceptor.Interceptors.MethodValidation
 
         private void CheckPreconditions(IInvocation invocation)
         {
-            if (_helper.HasInvocationAttribute<BlockDefaultParameterValuesAttribute>(invocation))
+            if (_methodValidationSettingsResolver.BlockDefaultValueParameters(invocation.MethodInvocationTarget, invocation.Arguments))
             {
                 if (invocation.Arguments.Where(p => p.Equals(_helper.GetDefaultValue(p.GetType()))).Any())
                 {
@@ -38,7 +40,7 @@ namespace WiseInterceptor.Interceptors.MethodValidation
 
         private void CheckPostConditions(IInvocation invocation)
         {
-            if (_helper.HasInvocationAttribute<BlockDefaultResultAttribute>(invocation))
+            if (_methodValidationSettingsResolver.BlockDefaultResult(invocation.MethodInvocationTarget, invocation.Arguments))
             {
                 if (invocation.ReturnValue.Equals(_helper.GetDefaultValue(invocation.ReturnValue.GetType())))
                 {

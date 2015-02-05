@@ -30,5 +30,22 @@ namespace CircuitBreakerDemo
         {
             return DateTime.Now;
         }
+
+        public void InsertInPersistantCache(string Key, object Value)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public void GetFromPersistantCache(string Key)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        object ICache.GetFromPersistantCache(string Key)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

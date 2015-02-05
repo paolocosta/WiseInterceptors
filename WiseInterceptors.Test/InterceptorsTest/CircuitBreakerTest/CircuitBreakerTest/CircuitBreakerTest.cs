@@ -21,7 +21,10 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
 
         private  IContainer BuildContainer()
         {
-            
+            var timeProvider = Substitute.For<TimeProvider>();
+            TimeProvider.Current = timeProvider;
+            TimeProvider.Current.UtcNow.Returns(DateTime.MinValue);
+
             var builder = new ContainerBuilder();
 
             var circuitBreakerSettingsReader = Substitute.For<ICircuitBreakerSettingsReader>();
@@ -43,6 +46,8 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
 
             var container = builder.Build();
             return container;
+
+            
         }
 
         [Test]

@@ -54,5 +54,12 @@ namespace WiseInterceptor.Common
         {
             return invocation.MethodInvocationTarget.GetCustomAttributes(typeof(T), false).Any();
         }
+
+        public string GetMethodDescription(IInvocation invocation)
+        {
+            return string.Format("{0}.{1}",
+                        invocation.MethodInvocationTarget.DeclaringType.FullName,
+                        invocation.MethodInvocationTarget.Name);
+        }
     }
 }

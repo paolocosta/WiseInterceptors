@@ -14,5 +14,8 @@ namespace WiseInterceptor.Common
 
         void Remove(string Key);
 
+        void InsertInPersistantCache(string Key, object Value);
+
+        object GetFromPersistantCache(string Key);
     }
 }

@@ -13,6 +13,14 @@ namespace WiseInterceptor.Interceptors.Cache
         High
     }
 
+    public enum FaultToleranceEnum
+    {
+        AlwaysUsePersistentCache,
+        UsePersistentCacheOnlyInCaseOfError,
+        ProlongCacheInCaseOfError,
+        FailFast
+    }
+
     public class CacheSettings
     {
         public CacheSettings()
@@ -23,6 +31,8 @@ namespace WiseInterceptor.Interceptors.Cache
 
         public int Duration { get; set; }
         public PriorityEnum Priority { get; set; }
+        public FaultToleranceEnum FaultToleranceType { get; set; }
+        public bool UseCache { get; set; }
     }
 
 }

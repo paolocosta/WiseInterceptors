@@ -1,6 +1,6 @@
 # WiseInterceptors
 
-This project implements some C# interceptors.
+This project implements some C# interceptors using Castle Dynamic Proxy and AutoFac
 
 Currently we have:
 

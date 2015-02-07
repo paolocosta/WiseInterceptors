@@ -22,42 +22,17 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
     public class CacheInterceptorTest
     {
         [Test]
-        public void should_call_get_settings()
+        public void should_call_get_result()
         {
-            var builder = new ContainerBuilder();
-
-            builder.RegisterModule<InterceptorModule>();
-
             var cache = Substitute.For<ICache>();
-            cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>()).Returns(
-                new CacheSettings { UseCache=false});
-            builder.Register(c => cache).As<ICache>();
-            builder.RegisterType<Cachable>()
-            .EnableClassInterceptors()
-            .InterceptedBy(typeof(CacheInterceptor));
+            var helper = Substitute.For<IHelper>();
+            var invocationManager = Substitute.For<ICacheInvocationManager>();
+            var invocation = Substitute.For<IInvocation>();
+            invocationManager.GetResult(invocation).Returns(1);
+            var sut = new CacheInterceptor(cache, helper, invocationManager);
+            sut.Intercept(invocation);
 
-            var container = builder.Build();
-
-            var cachable = container.Resolve<Cachable>();
-            
-            cachable.DoNothing();
-            
-            cache.Received().GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>());
-        }
-
-        
-    }
-
-    public class Cachable
-    {
-        public virtual void DoNothing()
-        {
-            
-        }
-
-        public virtual string Hello(string Name)
-        {
-            return string.Format("Hello {Name}", Name);
+            invocation.ReturnValue.Should().Be(1);
         }
     }
 }

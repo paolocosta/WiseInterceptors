@@ -17,8 +17,8 @@ namespace WiseInterceptor.Interceptors.Cache
     {
         AlwaysUsePersistentCache,
         UsePersistentCacheOnlyInCaseOfError,
-        ProlongCacheInCaseOfError,
-        FailFast
+        JustProlongMemoryCacheInCaseOfError,
+        FailFastWithcacheNoRecovery
     }
 
     public class CacheSettings

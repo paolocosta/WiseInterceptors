@@ -17,13 +17,11 @@ namespace WiseInterceptor.Interceptors.Cache
     {
         readonly ICache _cache;
         readonly IHelper _helper;
-        readonly ICacheSettingsReader _cacheSettingsReader;
-
-        public CacheInvocationManager(ICache cache, IHelper helper, ICacheSettingsReader cacheSettingsReader)
+        
+        public CacheInvocationManager(ICache cache, IHelper helper)
         {
             _cache = cache;
             _helper = helper;
-            _cacheSettingsReader = cacheSettingsReader;
         }
 
             private void CheckNotVoidReturnType(IInvocation invocation)
@@ -39,7 +37,7 @@ namespace WiseInterceptor.Interceptors.Cache
 
         public object GetResult(IInvocation invocation)
         {
-            CacheSettings settings = _cacheSettingsReader.GetSettings(invocation.MethodInvocationTarget, invocation.Arguments);
+            CacheSettings settings = _cache.GetSettings(invocation.MethodInvocationTarget, invocation.Arguments);
 
             if (!settings.UseCache)
             {

@@ -12,18 +12,15 @@ namespace WiseInterceptor.Interceptors.Cache
     {
         readonly ICache _Cache;
         readonly IHelper _helper;
-        readonly ICacheSettingsReader _cacheSettingsReader;
         readonly ICacheInvocationManager _invocationManager;
 
         public CacheInterceptor(
             ICache cache, 
             IHelper helper, 
-            ICacheSettingsReader cacheSettingsReader,
             ICacheInvocationManager invocationManager)
         {
             _Cache = cache;
             _helper = helper;
-            _cacheSettingsReader = cacheSettingsReader;
             _invocationManager = invocationManager;
         }
 

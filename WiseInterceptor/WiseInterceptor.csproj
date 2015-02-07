@@ -59,7 +59,6 @@
     <Compile Include="Interceptors\Cache\CacheInterceptor.cs" />
     <Compile Include="Interceptors\Cache\CacheSettings.cs" />
     <Compile Include="Interceptors\Cache\CacheValue.cs" />
-    <Compile Include="Interceptors\Cache\ICacheSettingsReader.cs" />
     <Compile Include="Interceptors\Cache\CacheInvocationManager.cs" />
     <Compile Include="Interceptors\Cache\PersistantCacheEnum.cs" />
     <Compile Include="Interceptors\CircuitBreaker\CircuitBreaker.cs" />

@@ -29,11 +29,9 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             builder.RegisterModule<InterceptorModule>();
 
             var cache = Substitute.For<ICache>();
-            var cacheSettingsReader = Substitute.For<ICacheSettingsReader>();
-            cacheSettingsReader.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>()).Returns(
+            cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>()).Returns(
                 new CacheSettings { UseCache=false});
             builder.Register(c => cache).As<ICache>();
-            builder.Register(c => cacheSettingsReader).As<ICacheSettingsReader>();
             builder.RegisterType<Cachable>()
             .EnableClassInterceptors()
             .InterceptedBy(typeof(CacheInterceptor));
@@ -44,7 +42,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             
             cachable.DoNothing();
             
-            cacheSettingsReader.Received().GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>());
+            cache.Received().GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>());
         }
 
         

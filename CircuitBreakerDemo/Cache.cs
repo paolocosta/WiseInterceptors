@@ -47,5 +47,11 @@ namespace CircuitBreakerDemo
         {
             throw new NotImplementedException();
         }
+
+
+        public WiseInterceptor.Interceptors.Cache.CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

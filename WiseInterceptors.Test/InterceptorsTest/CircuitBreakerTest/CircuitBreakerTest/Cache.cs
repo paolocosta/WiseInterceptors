@@ -44,13 +44,13 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         }
 
 
-        public void GetFromPersistantCache(string Key)
+        object ICache.GetFromPersistantCache(string Key)
         {
             throw new NotImplementedException();
         }
 
 
-        object ICache.GetFromPersistantCache(string Key)
+        public WiseInterceptor.Interceptors.Cache.CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
         {
             throw new NotImplementedException();
         }

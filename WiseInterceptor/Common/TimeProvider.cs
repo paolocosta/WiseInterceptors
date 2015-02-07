@@ -20,6 +20,11 @@ namespace WiseInterceptor.Common
             }
         }
 
+        public static void ResetDefault()
+        {
+            current = DefaultTimeProvider.Instance;
+        }
+
         public abstract DateTime UtcNow { get; }
     }
 

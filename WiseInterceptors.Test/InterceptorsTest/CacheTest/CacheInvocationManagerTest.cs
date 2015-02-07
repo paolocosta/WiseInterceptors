@@ -104,6 +104,39 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         }
 
         [Test]
+        [ExpectedException(typeof(ApplicationException))]
+        public void should_throw_the_same_exception_when_settings_are_configured_for_FailFastWithcacheNoRecovery_and_method_throws_exception()
+        {
+            _cache.GetFromPersistantCache("key").Returns(null);
+            _cache.Get("key").Returns(null);
+            _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
+            _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
+                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = FaultToleranceEnum.FailFastWithNoRecovery, UseCache = true });
+
+            _invocation.When(x => x.Proceed()).Do(x => { throw new ApplicationException(); });
+
+            _sut.GetResult(_invocation);
+        }
+
+        [ExpectedException(typeof(ApplicationException))]
+        public void should_insert_in_cache_when_settings_are_configured_for_JustProlongMemoryCacheInCaseOfError_and_cache_is_softly_expired_and_method_throws_exception()
+        {
+            var expiryDate = TimeProvider.Current.UtcNow.AddSeconds(-1);
+            _cache.Get("key").Returns(new CacheValue { Value = 1, ExpiryDate = expiryDate });
+            _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
+            _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
+                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = FaultToleranceEnum.JustProlongMemoryCacheInCaseOfError, UseCache = true });
+
+            _invocation.When(x => x.Proceed()).Do(x => { throw new ApplicationException(); });
+
+            _sut.GetResult(_invocation);
+
+            var newExpectedExpiryDate = TimeProvider.Current.UtcNow.AddSeconds(20 * 60);
+
+            _cache.Received().Insert("key", Arg.Is<CacheValue>(x => (int)x.Value == 2), Arg.Is<DateTime>(newExpectedExpiryDate));
+        }
+
+        [Test]
         public void should_write_in_persistent_cache_when_settings_are_configured_for_error_persistence_and_method_raises_exception_and_cache_is_softly_but_not_hardly_expired()
         {
             _cache.Get("key").Returns(new CacheValue { ExpiryDate = _time.AddSeconds(-1), Value = 1 });

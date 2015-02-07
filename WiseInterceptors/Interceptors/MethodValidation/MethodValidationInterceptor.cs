@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
-using WiseInterceptor.Common;
+using WiseInterceptors.Common;
 
-namespace WiseInterceptor.Interceptors.MethodValidation
+namespace WiseInterceptors.Interceptors.MethodValidation
 {
     public class MethodValidationInterceptor:IInterceptor
     {

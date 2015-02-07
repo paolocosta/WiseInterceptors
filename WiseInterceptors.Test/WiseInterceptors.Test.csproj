@@ -88,9 +88,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WiseInterceptor\WiseInterceptor.csproj">
+    <ProjectReference Include="..\WiseInterceptor\WiseInterceptors.csproj">
       <Project>{441f6cce-6a15-4dca-8224-5e6c10975e7b}</Project>
-      <Name>WiseInterceptor</Name>
+      <Name>WiseInterceptors</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

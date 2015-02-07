@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WiseInterceptor.Common
+namespace WiseInterceptors.Common
 {
     public class Helper:IHelper
     {

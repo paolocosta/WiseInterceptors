@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WiseInterceptor.Common;
-using WiseInterceptor.Interceptors.CircuitBreaker;
+using WiseInterceptors.Common;
+using WiseInterceptors.Interceptors.CircuitBreaker;
 using NSubstitute;
 using System.Reflection;
 

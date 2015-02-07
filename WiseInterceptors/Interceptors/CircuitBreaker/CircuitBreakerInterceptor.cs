@@ -5,9 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using WiseInterceptor.Common;
+using WiseInterceptors.Common;
 
-namespace WiseInterceptor.Interceptors.CircuitBreaker
+namespace WiseInterceptors.Interceptors.CircuitBreaker
 {
     
     public class CircuitBreakerInterceptor:IInterceptor

@@ -8,8 +8,8 @@ using Castle.DynamicProxy;
 using System.Reflection;
 using NUnit.Framework;
 using FluentAssertions;
-using WiseInterceptor.Interceptors.MethodValidation;
-using WiseInterceptor.Common;
+using WiseInterceptors.Interceptors.MethodValidation;
+using WiseInterceptors.Common;
 
 namespace WiseInterceptors.Test.InterceptorsTest.MethodValidationTest
 {

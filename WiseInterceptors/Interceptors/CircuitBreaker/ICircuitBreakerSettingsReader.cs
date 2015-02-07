@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WiseInterceptor.Interceptors.CircuitBreaker
+namespace WiseInterceptors.Interceptors.CircuitBreaker
 {
     public interface ICircuitBreakerSettingsReader
     {

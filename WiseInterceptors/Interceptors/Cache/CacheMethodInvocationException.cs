@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace WiseInterceptor.Interceptors.Cache
+namespace WiseInterceptors.Interceptors.Cache
 {
     internal class CacheMethodInvocationException : Exception
     {

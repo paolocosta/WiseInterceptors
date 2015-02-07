@@ -7,8 +7,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using WiseInterceptor.Common;
-using WiseInterceptor.Interceptors.Cache;
+using WiseInterceptors.Common;
+using WiseInterceptors.Interceptors.Cache;
 using FluentAssertions;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest

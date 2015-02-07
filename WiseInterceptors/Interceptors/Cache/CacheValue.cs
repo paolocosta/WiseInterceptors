@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WiseInterceptor.Interceptors.Cache
+namespace WiseInterceptors.Interceptors.Cache
 {
     public class CacheValue
     {

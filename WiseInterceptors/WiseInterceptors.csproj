@@ -7,8 +7,8 @@
     <ProjectGuid>{441F6CCE-6A15-4DCA-8224-5E6C10975E7B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WiseInterceptor</RootNamespace>
-    <AssemblyName>WiseInterceptor</AssemblyName>
+    <RootNamespace>WiseInterceptors</RootNamespace>
+    <AssemblyName>WiseInterceptors</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

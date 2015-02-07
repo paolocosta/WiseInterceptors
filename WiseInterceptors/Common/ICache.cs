@@ -4,9 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using WiseInterceptor.Interceptors.Cache;
+using WiseInterceptors.Interceptors.Cache;
 
-namespace WiseInterceptor.Common
+namespace WiseInterceptors.Common
 {
     public interface ICache
     {

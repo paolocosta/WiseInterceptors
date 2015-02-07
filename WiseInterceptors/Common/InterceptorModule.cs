@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WiseInterceptor.Interceptors.Cache;
-using WiseInterceptor.Interceptors.CircuitBreaker;
-using WiseInterceptor.Interceptors.MethodValidation;
+using WiseInterceptors.Interceptors.Cache;
+using WiseInterceptors.Interceptors.CircuitBreaker;
+using WiseInterceptors.Interceptors.MethodValidation;
 
-namespace WiseInterceptor.Common
+namespace WiseInterceptors.Common
 {
     public class InterceptorModule:Module
     {

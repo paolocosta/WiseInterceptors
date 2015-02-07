@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WiseInterceptor;
-using WiseInterceptor.Common;
+using WiseInterceptors;
+using WiseInterceptors.Common;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreakerTest
 {
@@ -50,7 +50,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         }
 
 
-        public WiseInterceptor.Interceptors.Cache.CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
+        public WiseInterceptors.Interceptors.Cache.CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
         {
             throw new NotImplementedException();
         }

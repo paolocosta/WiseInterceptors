@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WiseInterceptor.Interceptors.CircuitBreaker;
+using WiseInterceptors.Interceptors.CircuitBreaker;
 using Autofac.Extras.DynamicProxy2;
-using WiseInterceptor.Common;
+using WiseInterceptors.Common;
 
 namespace CircuitBreakerDemo
 {

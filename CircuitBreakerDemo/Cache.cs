@@ -4,8 +4,8 @@ using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
-using WiseInterceptor;
-using WiseInterceptor.Common;
+using WiseInterceptors;
+using WiseInterceptors.Common;
 
 namespace CircuitBreakerDemo
 {
@@ -49,7 +49,7 @@ namespace CircuitBreakerDemo
         }
 
 
-        public WiseInterceptor.Interceptors.Cache.CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
+        public WiseInterceptors.Interceptors.Cache.CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
         {
             throw new NotImplementedException();
         }

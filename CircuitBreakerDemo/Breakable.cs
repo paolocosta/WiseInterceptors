@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WiseInterceptor.Interceptors.CircuitBreaker;
+using WiseInterceptors.Interceptors.CircuitBreaker;
 using System.Reflection;
 
 namespace CircuitBreakerDemo

@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WiseInterceptor.Interceptors.Cache;
+using WiseInterceptors.Interceptors.Cache;
 using WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreakerTest;
 using FluentAssertions;
-using WiseInterceptor;
+using WiseInterceptors;
 using NSubstitute;
 using Castle.DynamicProxy;
-using WiseInterceptor.Common;
+using WiseInterceptors.Common;
 using System.Reflection;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest

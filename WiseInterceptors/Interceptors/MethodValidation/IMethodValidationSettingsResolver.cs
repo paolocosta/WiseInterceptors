@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WiseInterceptor.Interceptors.MethodValidation
+namespace WiseInterceptors.Interceptors.MethodValidation
 {
     public interface IMethodValidationSettingsResolver
     {

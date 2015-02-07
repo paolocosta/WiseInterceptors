@@ -24,51 +24,40 @@ namespace WiseInterceptor.Interceptors.Cache
             _helper = helper;
         }
 
-            private void CheckNotVoidReturnType(IInvocation invocation)
+        private void CheckReturnTypeIsNotVoid(IInvocation invocation)
+        {
+            if (_helper.IsReturnTypeVoid(invocation))
             {
-                if (_helper.IsReturnTypeVoid(invocation))
-                {
-                    throw new InvalidOperationException(string.Format("Cache was added to method {0} but it is not allowed as it returns void",
-                        _helper.GetMethodDescription(invocation)
-                        ));
-                }
+                throw new InvalidOperationException(string.Format("Cache interceptor was added to method {0} but it is not allowed as it returns void",
+                    _helper.GetMethodDescription(invocation)
+                    ));
             }
-        
+        }
 
         public object GetResult(IInvocation invocation)
         {
+            this.CheckReturnTypeIsNotVoid(invocation);
+
             CacheSettings settings = _cache.GetSettings(invocation.MethodInvocationTarget, invocation.Arguments);
 
             if (!settings.UseCache)
             {
-                invocation.Proceed();
-                return invocation.ReturnValue;
+                return GetRealResult(invocation);
             }
             else
             {
-                this.CheckNotVoidReturnType(invocation);
-                var key = _helper.GetCallIdentifier(invocation);
-                var value = _cache.Get(key) as CacheValue;
+                var key = GetInvocationKey(invocation);
+                var valueFromCache = GetCacheValue(key);
 
-                if (value != null)
+                if (valueFromCache != null)
                 {
-                    //Check if the soft expiry date is valid
-                    if (value.ExpiryDate > TimeProvider.Current.UtcNow)
+                    if (IsCacheValueValid(valueFromCache))
                     {
-                        return value.Value;
+                        return valueFromCache.Value;
                     }
                     else
                     {
-                        //increase the soft expiry date and insert the value in cache. This means that this request 
-                        //will be in charge of refreshing the query while the others can still see query the cache 
-                        _cache.Insert(
-                            key,
-                            new CacheValue
-                            {
-                                ExpiryDate = TimeProvider.Current.UtcNow.AddYears(1),
-                                Value = value.Value
-                            },
-                            TimeProvider.Current.UtcNow.AddYears(1));
+                        IncreaseSoftExpirationDate(key, valueFromCache);
                     }
                 }
 
@@ -76,43 +65,90 @@ namespace WiseInterceptor.Interceptors.Cache
                 {
                     try
                     {
-                        invocation.Proceed();
-                        _cache.Insert(
-                                key,
-                                new CacheValue
-                                {
-                                    ExpiryDate = TimeProvider.Current.UtcNow.AddSeconds(settings.Duration),
-                                    Value = invocation.ReturnValue
-                                },
-                                TimeProvider.Current.UtcNow.AddSeconds(settings.Duration).AddMinutes(2));
-
-                        if (settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache)
-                            _cache.InsertInPersistantCache(key, invocation.ReturnValue);
-
-                        return invocation.ReturnValue;
+                        var result = GetRealResult(invocation);
+                        AddResultToCache(invocation, settings, key);
+                        return result;
                     }
-                    catch
+                    catch (CacheMethodInvocationException ex)
                     {
-                        if (value != null)
+                        if (IsAnyKindOfPersistentCacheUsed(settings))
                         {
-                            if (settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache || settings.FaultToleranceType == FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError)
+                            if (valueFromCache != null)
                             {
-                                _cache.InsertInPersistantCache(key, value.Value);
+                                _cache.InsertInPersistantCache(key, valueFromCache.Value);
+                                return valueFromCache.Value;
                             }
-                            return value.Value;
-                        }
-                        if (settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache || settings.FaultToleranceType == FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError)
-                        {
+
                             object valueFromPersistantCache = _cache.GetFromPersistantCache(key);
                             if (valueFromPersistantCache != null)
                             {
                                 return valueFromPersistantCache;
                             }
                         }
-                        throw;
+                        throw ex.InnerException;
                     }
                 }
             }
+        }
+
+        private static bool IsAnyKindOfPersistentCacheUsed(CacheSettings settings)
+        {
+            return settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache || settings.FaultToleranceType == FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError;
+        }
+
+        private void AddResultToCache(IInvocation invocation, CacheSettings settings, string key)
+        {
+            _cache.Insert(
+                    key,
+                    new CacheValue
+                    {
+                        ExpiryDate = TimeProvider.Current.UtcNow.AddSeconds(settings.Duration),
+                        Value = GetRealResult(invocation)
+                    },
+                    TimeProvider.Current.UtcNow.AddSeconds(settings.Duration).AddMinutes(2));
+
+            if (settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache)
+                _cache.InsertInPersistantCache(key, invocation.ReturnValue);
+        }
+
+        private static bool IsCacheValueValid(CacheValue value)
+        {
+            return value.ExpiryDate >= TimeProvider.Current.UtcNow;
+        }
+
+        private void IncreaseSoftExpirationDate(string key, CacheValue value)
+        {
+            _cache.Insert(
+                key,
+                new CacheValue
+                {
+                    ExpiryDate = TimeProvider.Current.UtcNow.AddYears(1),
+                    Value = value.Value
+                },
+                TimeProvider.Current.UtcNow.AddYears(1));
+        }
+
+        private CacheValue GetCacheValue(string key)
+        {
+            return _cache.Get(key) as CacheValue;
+        }
+
+        private string GetInvocationKey(IInvocation invocation)
+        {
+            return _helper.GetCallIdentifier(invocation);
+        }
+
+        private static object GetRealResult(IInvocation invocation)
+        {
+            try
+            {
+                invocation.Proceed();
+            }
+            catch (Exception ex)
+            {
+                throw new CacheMethodInvocationException(ex);
+            }
+            return invocation.ReturnValue;
         }
 
         

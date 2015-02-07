@@ -57,6 +57,7 @@
     <Compile Include="Common\InterceptorModule.cs" />
     <Compile Include="Common\TimeProvider.cs" />
     <Compile Include="Interceptors\Cache\CacheInterceptor.cs" />
+    <Compile Include="Interceptors\Cache\CacheMethodInvocationException.cs" />
     <Compile Include="Interceptors\Cache\CacheSettings.cs" />
     <Compile Include="Interceptors\Cache\CacheValue.cs" />
     <Compile Include="Interceptors\Cache\CacheInvocationManager.cs" />

@@ -250,11 +250,11 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             _cache.Get(Arg.Any<string>()).Returns(new CacheValue { ExpiryDate = start.AddSeconds(-1), Value = 1 });
 
             _cache
-                .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 1), Arg.Is<DateTime>(y => (y - start) > new TimeSpan(0, 59, 0))))
+                .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 1), Arg.Any<DateTime>()))
                 .Do(x => calls = Tuple.Create(calls.Item1 + 1, calls.Item2));
 
             _cache
-                .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 2), Arg.Is<DateTime>(y => (y - start) < new TimeSpan(0, 59, 0))))
+                .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 2), Arg.Any<DateTime>()))
                 .Do(x => calls = Tuple.Create(calls.Item1, calls.Item2 + 1));
 
             _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);

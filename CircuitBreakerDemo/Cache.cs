@@ -36,18 +36,15 @@ namespace CircuitBreakerDemo
             throw new NotImplementedException();
         }
 
-
         public void GetFromPersistantCache(string Key)
         {
             throw new NotImplementedException();
         }
 
-
         object ICache.GetFromPersistantCache(string Key)
         {
             throw new NotImplementedException();
         }
-
 
         public WiseInterceptors.Interceptors.Cache.CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
         {

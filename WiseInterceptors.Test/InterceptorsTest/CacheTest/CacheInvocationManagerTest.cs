@@ -28,9 +28,10 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             _helper = Substitute.For<IHelper>();
             _invocation = Substitute.For<IInvocation>();
             _helper.GetCallIdentifier(_invocation).Returns("key");
+            _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
 
             _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
-                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, UseCache = true });
+                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, UseCache = true, FaultToleranceType= FaultToleranceEnum.FailFastWithNoRecovery });
 
             var timeProvider = Substitute.For<TimeProvider>();
             TimeProvider.Current = timeProvider;
@@ -75,9 +76,24 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         }
 
         [Test]
+        [TestCase(FaultToleranceEnum.AlwaysUsePersistentCache)]
+        [TestCase(FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError)]
+        public void should_write_in_cache_when_method_returns_exception_and_settings_are_configured_for_persistent_cache_and_value_is_not_found_in_volatile_cache_but_it_s_found_in_persistent_cache(FaultToleranceEnum faultTolerance)
+        {
+            _invocation.When(x => x.Proceed()).Do(x => { throw new ApplicationException(); });
+            _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
+                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = faultTolerance, UseCache = true });
+            _cache.Get("key").Returns(null);
+            _cache.GetFromPersistantCache("key").Returns(1);
+            _sut.GetResult(_invocation);
+
+            _cache.Received().Insert(Arg.Is<string>("key"), Arg.Is<CacheValue>(x => (int)x.Value == 1), Arg.Any<DateTime>());
+        }
+
+        [Test]
         public void should_read_from_persistent_cache_when_settings_are_configured_for_any_kind_of_persistence_and_method_raise_exception()
         {
-            _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
+            
             _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
                 .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = FaultToleranceEnum.AlwaysUsePersistentCache, UseCache=true });
             _cache.GetFromPersistantCache("key").Returns(1);
@@ -97,6 +113,20 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
             _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
                 .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = FaultToleranceEnum.AlwaysUsePersistentCache, UseCache=true });
+
+            _invocation.When(x => x.Proceed()).Do(x => { throw new ApplicationException(); });
+
+            _sut.GetResult(_invocation);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ApplicationException))]
+        public void should_throw_the_same_exception_when_settings_are_configured_for_JustProlongMemoryCacheInCaseOfError_and_invocation_throws_exception_and_cache_is_empty()
+        {
+            _cache.Get("key").Returns(null);
+            _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
+            _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
+                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = FaultToleranceEnum.JustProlongMemoryCacheInCaseOfError, UseCache = true });
 
             _invocation.When(x => x.Proceed()).Do(x => { throw new ApplicationException(); });
 
@@ -137,7 +167,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         }
 
         [Test]
-        public void should_write_in_persistent_cache_when_settings_are_configured_for_error_persistence_and_method_raises_exception_and_cache_is_softly_but_not_hardly_expired()
+        public void should_write_in_persistent_cache_when_settings_are_configured_for_UsePersistentCacheOnlyInCaseOfError_and_method_raises_exception_and_cache_is_softly_but_not_hardly_expired()
         {
             _cache.Get("key").Returns(new CacheValue { ExpiryDate = _time.AddSeconds(-1), Value = 1 });
             _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
@@ -154,10 +184,10 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         [Test]
         [TestCase(FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError)]
         [TestCase(FaultToleranceEnum.AlwaysUsePersistentCache)]
+        [TestCase(FaultToleranceEnum.JustProlongMemoryCacheInCaseOfError)]
         public void should_return_softly_expired_value_when_exception_is_raised(FaultToleranceEnum faultTolerance)
         {
             _cache.Get("key").Returns(new CacheValue { ExpiryDate = _time.AddSeconds(-1), Value = 1 });
-            _cache.GetFromPersistantCache("key").Returns(2);
             _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
             _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
                 .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = faultTolerance, UseCache = true });
@@ -178,11 +208,11 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             _cache.Get(Arg.Any<string>()).Returns(new CacheValue { ExpiryDate = start.AddSeconds(-1), Value = 1 });
 
             _cache
-                .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 1), Arg.Is<DateTime>(y => (y - start) > new TimeSpan(20, 0, 0, 0, 0))))
+                .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 1), Arg.Is<DateTime>(y => (y - start) > new TimeSpan(0, 59, 0))))
                 .Do(x => calls = Tuple.Create(calls.Item1 + 1, calls.Item2));
 
             _cache
-                .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 2), Arg.Is<DateTime>(y => (y - start) < new TimeSpan(20, 0, 0, 0, 0))))
+                .When(x => x.Insert(Arg.Any<string>(), Arg.Is<CacheValue>(y => (int)y.Value == 2), Arg.Is<DateTime>(y => (y - start) < new TimeSpan(0, 59, 0))))
                 .Do(x => calls = Tuple.Create(calls.Item1, calls.Item2 + 1));
 
             _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
@@ -214,6 +244,25 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             var result = _sut.GetResult(_invocation);
 
             result.Should().Be(1);
+        }
+
+        [Test]
+        [TestCase(FaultToleranceEnum.AlwaysUsePersistentCache)]
+        [TestCase(FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError)]
+        [TestCase(FaultToleranceEnum.JustProlongMemoryCacheInCaseOfError)]
+        public void should_add_softly_expired_value_to_cache_if_method_throws_exception_and_fault_tolerance_is_not_FailFastWithNoRecovery(FaultToleranceEnum faultTolerance)
+        {
+            var softExpirationTime = TimeProvider.Current.UtcNow.AddSeconds(-1);
+            _invocation.When(x => x.Proceed()).Do(x => { throw new Exception(); });
+            _cache.Get("key").Returns(new CacheValue { Value = 1, ExpiryDate = softExpirationTime });
+            _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
+                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, UseCache = true, FaultToleranceType = faultTolerance });
+
+            var newExpiration = TimeProvider.Current.UtcNow.AddSeconds(20 * 60);
+
+            var result = _sut.GetResult(_invocation);
+
+            _cache.Received().Insert("key", Arg.Is<CacheValue>(x => x.ExpiryDate == newExpiration && (int)x.Value == 1 ), newExpiration.AddMinutes(2));
         }
 
         [TearDown]

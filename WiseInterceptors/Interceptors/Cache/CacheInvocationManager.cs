@@ -84,9 +84,6 @@ namespace WiseInterceptors.Interceptors.Cache
 
                         if (valueFromCache != null)
                         {
-                            var softExpiryDate = TimeProvider.Current.UtcNow.AddSeconds(settings.Duration);
-                            var hardExpiryDate = softExpiryDate.AddMinutes(2);
-                            InsertValueInCache(key, valueFromCache.Value, softExpiryDate, hardExpiryDate);
                             if (settings.FaultToleranceType == FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError)
                             {
                                 _cache.InsertInPersistantCache(key, valueFromCache.Value);
@@ -95,6 +92,7 @@ namespace WiseInterceptors.Interceptors.Cache
                         }
 
                         object valueFromPersistantCache = _cache.GetFromPersistantCache(key);
+                        
                         if (valueFromPersistantCache != null)
                         {
                             AddValueToVolatileCache(key, valueFromPersistantCache, settings);
@@ -107,18 +105,11 @@ namespace WiseInterceptors.Interceptors.Cache
             }
         }
 
-        private static bool IsAnyKindOfPersistentCacheUsed(CacheSettings settings)
-        {
-            return settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache || settings.FaultToleranceType == FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError;
-        }
-
         private void AddValueToVolatileCache(string key, object value, CacheSettings settings)
         {
             var softExpiryDate = TimeProvider.Current.UtcNow.AddSeconds(settings.Duration);
             var hardExpiryDate = softExpiryDate.AddMinutes(2);
             InsertValueInCache(key, value, softExpiryDate, hardExpiryDate);
-
-            
         }
 
         private void AddValueToPersistentCache(string key, object value, CacheSettings settings)

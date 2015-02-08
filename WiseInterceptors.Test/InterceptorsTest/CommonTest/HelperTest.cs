@@ -15,7 +15,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
     class HelperTest
     {
         [Test]
-        public void GetCallIdentifier_returns_correct_value()
+        public void should_GetCallIdentifier_return_correct_value()
         {
             var invocation = Substitute.For<IInvocation>();
             invocation.Arguments.Returns(new object[] { 1, 2, 3 });
@@ -26,7 +26,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
         }
 
         [Test]
-        public void GetMethodIdentifier_returns_correct_value()
+        public void should_GetMethodIdentifier_return_correct_value()
         {
             var invocation = Substitute.For<IInvocation>();
             invocation.Method.Returns(typeof(DateTime).GetMethod("FromOADate"));
@@ -36,14 +36,14 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
         }
 
         [Test]
-        public void GetDefaultValue_shuould_return_0_for_a_value_type()
+        public void should_GetDefaultValue_return_0_for_a_value_type()
         {
             var sut = new Helper();
             sut.GetDefaultValue(typeof(Int32)).Should().Be(0);
         }
 
         [Test]
-        public void GetDefaultValue_shuould_return_null_for_a_reference_type()
+        public void should_GetDefaultValue_return_null_for_a_reference_type()
         {
             var sut = new Helper();
             sut.GetDefaultValue(typeof(System.IO.MemoryStream)).Should().Be(null);

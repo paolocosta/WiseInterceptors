@@ -16,9 +16,9 @@ namespace WiseInterceptors.Common
 
         void Remove(string Key);
 
-        void InsertInPersistantCache(string Key, object Value);
+        void InsertInPersistentCache(string Key, object Value);
 
-        object GetFromPersistantCache(string Key);
+        object GetFromPersistentCache(string Key);
 
         CacheSettings GetSettings(MethodInfo method, object[] arguments);
     }

@@ -57,7 +57,7 @@ namespace WiseInterceptors.Interceptors.Cache
                     }
                     else
                     {
-                        IncreaseSoftExpirationDateWhileQueryIsPerformed(key, valueFromCache);
+                        IncreaseSoftExpirationDateWhileQueryIsPerformed(key, valueFromCache, false);
                     }
                 }
 
@@ -66,7 +66,7 @@ namespace WiseInterceptors.Interceptors.Cache
                     try
                     {
                         var result = GetRealResult(invocation);
-                        AddValueToVolatileCache(key, result, settings);
+                        AddValueToVolatileCache(key, result, settings, settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache);
                         AddValueToPersistentCache(key, result, settings);
                         return result;
                     }
@@ -84,19 +84,20 @@ namespace WiseInterceptors.Interceptors.Cache
 
                         if (valueFromCache != null)
                         {
-                            if (settings.FaultToleranceType == FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError)
+                            if (settings.FaultToleranceType == FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError && !valueFromCache.Persisted)
                             {
-                                _cache.InsertInPersistantCache(key, valueFromCache.Value);
+                                _cache.InsertInPersistentCache(key, valueFromCache.Value);
+                                AddValueToVolatileCache(key, valueFromCache.Value, settings, true);
                             }
                             return valueFromCache.Value;
                         }
 
-                        object valueFromPersistantCache = _cache.GetFromPersistantCache(key);
+                        object valueFromPersistentCache = _cache.GetFromPersistentCache(key);
                         
-                        if (valueFromPersistantCache != null)
+                        if (valueFromPersistentCache != null)
                         {
-                            AddValueToVolatileCache(key, valueFromPersistantCache, settings);
-                            return valueFromPersistantCache;
+                            AddValueToVolatileCache(key, valueFromPersistentCache, settings, true);
+                            return valueFromPersistentCache;
                         }
 
                         throw ex.InnerException;
@@ -105,27 +106,28 @@ namespace WiseInterceptors.Interceptors.Cache
             }
         }
 
-        private void AddValueToVolatileCache(string key, object value, CacheSettings settings)
+        private void AddValueToVolatileCache(string key, object value, CacheSettings settings, bool persisted)
         {
             var softExpiryDate = TimeProvider.Current.UtcNow.AddSeconds(settings.Duration);
             var hardExpiryDate = softExpiryDate.AddMinutes(2);
-            InsertValueInCache(key, value, softExpiryDate, hardExpiryDate);
+            InsertValueInCache(key, value, softExpiryDate, hardExpiryDate, persisted);
         }
 
         private void AddValueToPersistentCache(string key, object value, CacheSettings settings)
         {
             if (settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache)
-                _cache.InsertInPersistantCache(key, value);
+                _cache.InsertInPersistentCache(key, value);
         }
 
-        private void InsertValueInCache(string key, object returnValue, DateTime softExpiryDate, DateTime hardExpiryDate)
+        private void InsertValueInCache(string key, object returnValue, DateTime softExpiryDate, DateTime hardExpiryDate, bool persisted)
         {
             _cache.Insert(
                     key,
                     new CacheValue
                     {
                         ExpiryDate = softExpiryDate,
-                        Value = returnValue
+                        Value = returnValue,
+                        Persisted = persisted
                     },
                     hardExpiryDate);
         }
@@ -135,10 +137,10 @@ namespace WiseInterceptors.Interceptors.Cache
             return value.ExpiryDate >= TimeProvider.Current.UtcNow;
         }
 
-        private void IncreaseSoftExpirationDateWhileQueryIsPerformed(string key, CacheValue value)
+        private void IncreaseSoftExpirationDateWhileQueryIsPerformed(string key, CacheValue value, bool persisted)
         {
             var softExpiryDate = TimeProvider.Current.UtcNow.AddHours(1);
-            InsertValueInCache(key, value.Value, softExpiryDate, softExpiryDate.AddHours(1));      
+            InsertValueInCache(key, value.Value, softExpiryDate, softExpiryDate.AddHours(1), persisted);      
         }
 
         private CacheValue GetCacheValue(string key)

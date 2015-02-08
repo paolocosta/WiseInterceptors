@@ -38,13 +38,13 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
             _Elements = new Dictionary<string, Tuple<object, DateTime>>();
         }
 
-        public void InsertInPersistantCache(string Key, object Value)
+        public void InsertInPersistentCache(string Key, object Value)
         {
             throw new NotImplementedException();
         }
 
 
-        object ICache.GetFromPersistantCache(string Key)
+        object ICache.GetFromPersistentCache(string Key)
         {
             throw new NotImplementedException();
         }

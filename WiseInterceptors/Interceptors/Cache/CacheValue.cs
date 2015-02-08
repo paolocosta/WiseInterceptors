@@ -10,5 +10,6 @@ namespace WiseInterceptors.Interceptors.Cache
     {
         public object Value { get; set; }
         public DateTime ExpiryDate { get; set; }
+        public bool Persisted { get; set; }
     }
 }

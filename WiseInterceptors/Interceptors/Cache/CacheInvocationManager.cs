@@ -93,16 +93,14 @@ namespace WiseInterceptors.Interceptors.Cache
                             }
                             return valueFromCache.Value;
                         }
-                        
-                        if (IsAnyKindOfPersistentCacheUsed(settings))
+
+                        object valueFromPersistantCache = _cache.GetFromPersistantCache(key);
+                        if (valueFromPersistantCache != null)
                         {
-                            object valueFromPersistantCache = _cache.GetFromPersistantCache(key);
-                            if (valueFromPersistantCache != null)
-                            {
-                                AddValueToVolatileCache(key, valueFromPersistantCache, settings);
-                                return valueFromPersistantCache;
-                            }
+                            AddValueToVolatileCache(key, valueFromPersistantCache, settings);
+                            return valueFromPersistantCache;
                         }
+
                         throw ex.InnerException;
                     }
                 }

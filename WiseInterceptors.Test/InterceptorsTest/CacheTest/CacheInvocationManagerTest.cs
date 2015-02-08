@@ -67,7 +67,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         [Test]
         [TestCase(FaultToleranceEnum.AlwaysUsePersistentCache, true)]
         [TestCase(FaultToleranceEnum.FailFastWithNoRecovery, false)]
-        [TestCase(FaultToleranceEnum.JustProlongMemoryCacheInCaseOfError, false)]
+        [TestCase(FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors, false)]
         [TestCase(FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError, false)]
         public void should_write_in_cache_when_method_is_called(FaultToleranceEnum faultTolerance, bool persisted)
         {
@@ -126,12 +126,12 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
         [Test]
         [ExpectedException(typeof(ApplicationException))]
-        public void should_throw_the_same_exception_when_settings_are_configured_for_JustProlongMemoryCacheInCaseOfError_and_invocation_throws_exception_and_cache_is_empty()
+        public void should_throw_the_same_exception_when_settings_are_configured_for_ConsiderSoftlyExpiredValuesInCaseOfErrors_and_invocation_throws_exception_and_cache_is_empty()
         {
             _cache.Get("key").Returns(null);
             _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
             _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
-                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = FaultToleranceEnum.JustProlongMemoryCacheInCaseOfError, UseCache = true });
+                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors, UseCache = true });
 
             _invocation.When(x => x.Proceed()).Do(x => { throw new ApplicationException(); });
 
@@ -154,13 +154,13 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         }
 
         [ExpectedException(typeof(ApplicationException))]
-        public void should_insert_in_cache_when_settings_are_configured_for_JustProlongMemoryCacheInCaseOfError_and_cache_is_softly_expired_and_method_throws_exception()
+        public void should_insert_in_cache_when_settings_are_configured_for_ConsiderSoftlyExpiredValuesInCaseOfErrors_and_cache_is_softly_expired_and_method_throws_exception()
         {
             var expiryDate = TimeProvider.Current.UtcNow.AddSeconds(-1);
             _cache.Get("key").Returns(new CacheValue { Value = 1, ExpiryDate = expiryDate });
             _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
             _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
-                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = FaultToleranceEnum.JustProlongMemoryCacheInCaseOfError, UseCache = true });
+                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors, UseCache = true });
 
             _invocation.When(x => x.Proceed()).Do(x => { throw new ApplicationException(); });
 
@@ -226,7 +226,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         [Test]
         [TestCase(FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError)]
         [TestCase(FaultToleranceEnum.AlwaysUsePersistentCache)]
-        [TestCase(FaultToleranceEnum.JustProlongMemoryCacheInCaseOfError)]
+        [TestCase(FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors)]
         public void should_return_softly_expired_value_when_exception_is_raised(FaultToleranceEnum faultTolerance)
         {
             _cache.Get("key").Returns(new CacheValue { ExpiryDate = _time.AddSeconds(-1), Value = 1 });
@@ -286,6 +286,37 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             var result = _sut.GetResult(_invocation);
 
             result.Should().Be(1);
+        }
+
+        [Test]
+        public void should_use_custom_key_if_provided()
+        {
+            _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
+                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = FaultToleranceEnum.FailFastWithNoRecovery, UseCache = true, Key="Custom" });
+            _invocation.ReturnValue.Returns(1);
+
+            _sut.GetResult(_invocation);
+
+            _cache.Received().Insert("Custom", Arg.Any<object>(), Arg.Any<DateTime>());
+        }
+
+        [Test]
+        public void should_call_remove_when_FailFastWithNoRecovery_and_method_throws_exception()
+        {
+            _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
+                .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = FaultToleranceEnum.FailFastWithNoRecovery, UseCache = true, Key = "Custom" });
+            
+            _invocation.When(x => x.Proceed()).Do(x => { throw new ApplicationException(); });
+
+            try
+            {
+                _sut.GetResult(_invocation);
+            }
+            catch(ApplicationException)
+            { 
+            
+            }
+            _cache.Received().Remove("Custom");
         }
 
         [TearDown]

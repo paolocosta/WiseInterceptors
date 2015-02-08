@@ -46,7 +46,8 @@ namespace WiseInterceptors.Interceptors.Cache
             }
             else
             {
-                var key = GetInvocationKey(invocation);
+                var key = GetInvocationKey(invocation, settings);
+                
                 var valueFromCache = GetCacheValue(key);
 
                 if (valueFromCache != null)
@@ -74,10 +75,11 @@ namespace WiseInterceptors.Interceptors.Cache
                     {
                         if (settings.FaultToleranceType == FaultToleranceEnum.FailFastWithNoRecovery)
                         {
+                            _cache.Remove(key);
                             throw ex.InnerException;
                         }
 
-                        if (valueFromCache == null && settings.FaultToleranceType == FaultToleranceEnum.JustProlongMemoryCacheInCaseOfError)
+                        if (valueFromCache == null && settings.FaultToleranceType == FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors)
                         {
                             throw ex.InnerException;
                         }
@@ -139,8 +141,8 @@ namespace WiseInterceptors.Interceptors.Cache
 
         private void IncreaseSoftExpirationDateWhileQueryIsPerformed(string key, CacheValue value, bool persisted)
         {
-            var softExpiryDate = TimeProvider.Current.UtcNow.AddHours(1);
-            InsertValueInCache(key, value.Value, softExpiryDate, softExpiryDate.AddHours(1), persisted);      
+            var softExpiryDate = TimeProvider.Current.UtcNow.AddSeconds(10);
+            InsertValueInCache(key, value.Value, softExpiryDate, softExpiryDate.AddMinutes(10), persisted);      
         }
 
         private CacheValue GetCacheValue(string key)
@@ -148,9 +150,9 @@ namespace WiseInterceptors.Interceptors.Cache
             return _cache.Get(key) as CacheValue;
         }
 
-        private string GetInvocationKey(IInvocation invocation)
+        private string GetInvocationKey(IInvocation invocation, CacheSettings settings)
         {
-            return _helper.GetCallIdentifier(invocation);
+            return  string.IsNullOrEmpty(settings.Key) ? _helper.GetCallIdentifier(invocation) : settings.Key;
         }
 
         private static object GetRealResult(IInvocation invocation)

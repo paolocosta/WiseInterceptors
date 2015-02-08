@@ -17,7 +17,7 @@ namespace WiseInterceptors.Interceptors.Cache
     {
         AlwaysUsePersistentCache,
         UsePersistentCacheOnlyInCaseOfError,
-        JustProlongMemoryCacheInCaseOfError,
+        ConsiderSoftlyExpiredValuesInCaseOfErrors,
         FailFastWithNoRecovery
     }
 
@@ -33,6 +33,8 @@ namespace WiseInterceptors.Interceptors.Cache
         public PriorityEnum Priority { get; set; }
         public FaultToleranceEnum FaultToleranceType { get; set; }
         public bool UseCache { get; set; }
+
+        public string Key { get; set; }
     }
 
 }

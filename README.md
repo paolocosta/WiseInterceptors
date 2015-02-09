@@ -2,7 +2,9 @@
 
 This project implements some C# interceptors using Castle Dynamic Proxy and AutoFac
 
-Currently we have:
+For more information about AOP please follow this video http://channel9.msdn.com/Events/GOTO/GOTO-2011-Copenhagen/CPH-Aspect-Oriented-Programming-with-Dependency-Injection by Mark Seeman.
+
+Currently we have implemented:
 
  1. A circuit breaker interceptor. 
  
@@ -10,14 +12,16 @@ Currently we have:
 
  3. A method validation interceptor.
 
+ 4. A logger interceptor
+
 The goal is to have a complete suite of easily configurable interceptors as a starter kit for enterprise projects.
 
 How to use the cache interceptor
 ================================
 
-The cache interceptor applies the cache algorithm proposed here: https://happinessdd.wordpress.com/2014/11/06/a-new-solution-for-the-cache-stampede-problem/.
+The cache interceptor applies the caching algorithm proposed here: https://happinessdd.wordpress.com/2014/11/06/a-new-solution-for-the-cache-stampede-problem/.
 
-It's also possible to save cached data in a persistent storage in order to be fault tolerant to database failures.
+It's also possible to save cached data in a persistent storage in order to be tolerant to database failures.
 
 To apply a cache interceptor to a method please give a look at the CacheDemo project.
 

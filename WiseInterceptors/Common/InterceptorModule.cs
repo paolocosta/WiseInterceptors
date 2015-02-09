@@ -19,8 +19,6 @@ namespace WiseInterceptors.Common
             builder.RegisterType<CacheInterceptor>().InstancePerLifetimeScope();
             builder.RegisterType<CircuitBreakerInterceptor>().InstancePerLifetimeScope();
             builder.RegisterType<MethodValidationInterceptor>().InstancePerLifetimeScope();
-
-            
         }
     }
 }

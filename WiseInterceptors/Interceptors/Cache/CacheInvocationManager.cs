@@ -66,46 +66,56 @@ namespace WiseInterceptors.Interceptors.Cache
                 {
                     try
                     {
-                        var result = GetRealResult(invocation);
-                        AddValueToVolatileCache(key, result, settings, settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache);
-                        AddValueToPersistentCache(key, result, settings);
-                        return result;
+                        return DoRealCall(invocation, settings, key);
                     }
                     catch (CacheMethodInvocationException ex)
                     {
-                        if (settings.FaultToleranceType == FaultToleranceEnum.FailFastWithNoRecovery)
-                        {
-                            _cache.Remove(key);
-                            throw ex.InnerException;
-                        }
-
-                        if (valueFromCache == null && settings.FaultToleranceType == FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors)
-                        {
-                            throw ex.InnerException;
-                        }
-
-                        if (valueFromCache != null)
-                        {
-                            if (settings.FaultToleranceType == FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError && !valueFromCache.Persisted)
-                            {
-                                _cache.InsertInPersistentCache(key, valueFromCache.Value);
-                                AddValueToVolatileCache(key, valueFromCache.Value, settings, true);
-                            }
-                            return valueFromCache.Value;
-                        }
-
-                        object valueFromPersistentCache = _cache.GetFromPersistentCache(key);
-                        
-                        if (valueFromPersistentCache != null)
-                        {
-                            AddValueToVolatileCache(key, valueFromPersistentCache, settings, true);
-                            return valueFromPersistentCache;
-                        }
-
-                        throw ex.InnerException;
+                        return HandleInvocationException(settings, key, valueFromCache, ex);
                     }
                 }
             }
+        }
+
+        private object DoRealCall(IInvocation invocation, CacheSettings settings, string key)
+        {
+            var result = GetRealResult(invocation);
+            AddValueToVolatileCache(key, result, settings, settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache);
+            AddValueToPersistentCache(key, result, settings);
+            return result;
+        }
+
+        private object HandleInvocationException(CacheSettings settings, string key, CacheValue valueFromCache, CacheMethodInvocationException ex)
+        {
+            if (settings.FaultToleranceType == FaultToleranceEnum.FailFastWithNoRecovery)
+            {
+                _cache.Remove(key);
+                throw ex.InnerException;
+            }
+
+            if (valueFromCache == null && settings.FaultToleranceType == FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors)
+            {
+                throw ex.InnerException;
+            }
+
+            if (valueFromCache != null)
+            {
+                if (settings.FaultToleranceType == FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError && !valueFromCache.Persisted)
+                {
+                    _cache.InsertInPersistentCache(key, valueFromCache.Value);
+                    AddValueToVolatileCache(key, valueFromCache.Value, settings, true);
+                }
+                return valueFromCache.Value;
+            }
+
+            object valueFromPersistentCache = _cache.GetFromPersistentCache(key);
+
+            if (valueFromPersistentCache != null)
+            {
+                AddValueToVolatileCache(key, valueFromPersistentCache, settings, true);
+                return valueFromPersistentCache;
+            }
+
+            throw ex.InnerException;
         }
 
         private void AddValueToVolatileCache(string key, object value, CacheSettings settings, bool persisted)

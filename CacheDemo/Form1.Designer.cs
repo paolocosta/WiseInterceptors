@@ -132,7 +132,6 @@
             // AlwaysUsePersistentCache
             // 
             this.AlwaysUsePersistentCache.AutoSize = true;
-            this.AlwaysUsePersistentCache.Enabled = false;
             this.AlwaysUsePersistentCache.Location = new System.Drawing.Point(16, 88);
             this.AlwaysUsePersistentCache.Name = "AlwaysUsePersistentCache";
             this.AlwaysUsePersistentCache.Size = new System.Drawing.Size(154, 17);
@@ -144,7 +143,6 @@
             // UsePersistentCacheOnlyInCaseOfError
             // 
             this.UsePersistentCacheOnlyInCaseOfError.AutoSize = true;
-            this.UsePersistentCacheOnlyInCaseOfError.Enabled = false;
             this.UsePersistentCacheOnlyInCaseOfError.Location = new System.Drawing.Point(16, 65);
             this.UsePersistentCacheOnlyInCaseOfError.Name = "UsePersistentCacheOnlyInCaseOfError";
             this.UsePersistentCacheOnlyInCaseOfError.Size = new System.Drawing.Size(208, 17);

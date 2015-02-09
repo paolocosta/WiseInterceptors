@@ -11,6 +11,9 @@ namespace CacheDemo
 {
     public class Cache:ICache
     {
+        private static Dictionary<string, object> _PersistantCache = new Dictionary<string, object>();
+
+
         public void Insert(string Key, object Value, DateTime Expiration)
         {
             Remove(Key);
@@ -29,14 +32,18 @@ namespace CacheDemo
 
         public void InsertInPersistentCache(string Key, object Value)
         {
-            //Not yet
-            throw new NotImplementedException();
+            if (_PersistantCache.ContainsKey(Key))
+                _PersistantCache.Remove(Key);
+
+            _PersistantCache.Add(Key, Value);
         }
 
         public object GetFromPersistentCache(string Key)
         {
-            //Not yet
-            throw new NotImplementedException();
+            if (_PersistantCache.ContainsKey(Key))
+                return _PersistantCache[Key];
+
+            return null;
         }
 
         public WiseInterceptors.Interceptors.Cache.CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)

@@ -26,7 +26,7 @@ namespace WiseInterceptors.Interceptors.Cache
 
         public void Intercept(IInvocation invocation)
         {
-            invocation.ReturnValue = _invocationManager.GetResult(invocation);
+            invocation.ReturnValue = _invocationManager.GetInvocationResult(invocation);
         }
     }
 }

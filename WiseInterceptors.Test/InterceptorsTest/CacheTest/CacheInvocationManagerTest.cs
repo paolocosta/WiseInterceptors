@@ -48,7 +48,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(true);
             _helper.GetMethodDescription(Arg.Any<IInvocation>()).Returns(string.Empty);
             
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             _invocation.ReturnValue.Returns(2);
 
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
 
             _cache.Received().InsertInPersistentCache("key", 2);
         }
@@ -75,7 +75,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             _cache.GetSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>())
                 .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = faultTolerance, UseCache = true });
             
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
             
             _cache.Received().Insert(Arg.Is<string>("key"), Arg.Is<CacheValue>(x => (int)x.Value == 2 && x.Persisted == persisted), Arg.Any<DateTime>());
         }
@@ -90,7 +90,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
                 .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = faultTolerance, UseCache = true });
             _cache.Get("key").Returns(null);
             _cache.GetFromPersistentCache("key").Returns(1);
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
 
             _cache.Received().Insert(Arg.Is<string>("key"), Arg.Is<CacheValue>(x => (int)x.Value == 1), Arg.Any<DateTime>());
         }
@@ -104,7 +104,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             _cache.GetFromPersistentCache("key").Returns(1);
             _invocation.When(x => x.Proceed()).Do(x => { throw new Exception(); });
 
-            var result = _sut.GetResult(_invocation);
+            var result = _sut.GetInvocationResult(_invocation);
 
             result.Should().Be(1);
         }
@@ -121,7 +121,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             _invocation.When(x => x.Proceed()).Do(x => { throw new ApplicationException(); });
 
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
         }
 
         [Test]
@@ -135,7 +135,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             _invocation.When(x => x.Proceed()).Do(x => { throw new ApplicationException(); });
 
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
         }
 
         [Test]
@@ -150,7 +150,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             _invocation.When(x => x.Proceed()).Do(x => { throw new ApplicationException(); });
 
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
         }
 
         [ExpectedException(typeof(ApplicationException))]
@@ -164,7 +164,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             _invocation.When(x => x.Proceed()).Do(x => { throw new ApplicationException(); });
 
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
 
             var newExpectedExpiryDate = TimeProvider.Current.UtcNow.AddSeconds(20 * 60);
 
@@ -183,7 +183,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             _invocation.When(x => x.Proceed()).Do(x => { throw new Exception(); });
 
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
             
             _cache.DidNotReceive().InsertInPersistentCache("key", 1);
         }
@@ -198,7 +198,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             _invocation.When(x => x.Proceed()).Do(x => { throw new Exception(); });
 
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
 
             _cache.Received().InsertInPersistentCache("key", 1);
         }
@@ -213,7 +213,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             _invocation.When(x => x.Proceed()).Do(x => { throw new Exception(); });
 
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
 
             var expiration = TimeProvider.Current.UtcNow.AddSeconds(20 * 60);
 
@@ -236,7 +236,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             _invocation.When(x => x.Proceed()).Do(x => { throw new Exception(); });
 
-            var result = _sut.GetResult(_invocation);
+            var result = _sut.GetInvocationResult(_invocation);
 
             result.Should().Be(1);
         }
@@ -259,7 +259,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             _helper.IsReturnTypeVoid(Arg.Any<IInvocation>()).Returns(false);
 
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
             
             calls.Should().Be(Tuple.Create(1, 1));
         }
@@ -271,7 +271,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             var expiryDate = TimeProvider.Current.UtcNow.AddSeconds(1);
             _cache.Get("key").Returns(new CacheValue { ExpiryDate = expiryDate, Value = 1 });
             
-            var result = _sut.GetResult(_invocation);
+            var result = _sut.GetInvocationResult(_invocation);
 
             result.Should().Be(1);
         }
@@ -283,7 +283,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             var expiryDate = TimeProvider.Current.UtcNow.AddSeconds(-1);
             _cache.Get("key").Returns(new CacheValue { Value = 2, ExpiryDate = expiryDate });
 
-            var result = _sut.GetResult(_invocation);
+            var result = _sut.GetInvocationResult(_invocation);
 
             result.Should().Be(1);
         }
@@ -295,7 +295,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
                 .Returns(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = FaultToleranceEnum.FailFastWithNoRecovery, UseCache = true, Key="Custom" });
             _invocation.ReturnValue.Returns(1);
 
-            _sut.GetResult(_invocation);
+            _sut.GetInvocationResult(_invocation);
 
             _cache.Received().Insert("Custom", Arg.Any<object>(), Arg.Any<DateTime>());
         }
@@ -310,7 +310,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             try
             {
-                _sut.GetResult(_invocation);
+                _sut.GetInvocationResult(_invocation);
             }
             catch(ApplicationException)
             { 

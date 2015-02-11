@@ -10,7 +10,7 @@ namespace WiseInterceptors.Interceptors.Cache
 {
     public interface ICacheInvocationManager
     {
-        object GetResult(IInvocation invocation); 
+        object GetInvocationResult(IInvocation invocation); 
     }
 
     public class CacheInvocationManager : ICacheInvocationManager
@@ -24,7 +24,7 @@ namespace WiseInterceptors.Interceptors.Cache
             _helper = helper;
         }
 
-        private void CheckReturnTypeIsNotVoid(IInvocation invocation)
+        private void FailIfInterceptedMethodReturnsVoid(IInvocation invocation)
         {
             if (_helper.IsReturnTypeVoid(invocation))
             {
@@ -34,25 +34,25 @@ namespace WiseInterceptors.Interceptors.Cache
             }
         }
 
-        public object GetResult(IInvocation invocation)
+        public object GetInvocationResult(IInvocation invocation)
         {
-            this.CheckReturnTypeIsNotVoid(invocation);
+            this.FailIfInterceptedMethodReturnsVoid(invocation);
 
             CacheSettings settings = _cache.GetSettings(invocation.MethodInvocationTarget, invocation.Arguments);
 
             if (!settings.UseCache)
             {
-                return GetRealResult(invocation);
+                return GetActualResult(invocation);
             }
             else
             {
                 var key = GetInvocationKey(invocation, settings);
                 
-                var valueFromCache = GetCacheValue(key);
+                var valueFromCache = GetValueFromVolatileCache(key);
 
                 if (valueFromCache != null)
                 {
-                    if (IsCacheValueValid(valueFromCache))
+                    if (IsValueFromVolatileCacheValid(valueFromCache))
                     {
                         return valueFromCache.Value;
                     }
@@ -78,9 +78,9 @@ namespace WiseInterceptors.Interceptors.Cache
 
         private object DoRealCall(IInvocation invocation, CacheSettings settings, string key)
         {
-            var result = GetRealResult(invocation);
-            AddValueToVolatileCache(key, result, settings, settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache);
-            AddValueToPersistentCache(key, result, settings);
+            var result = GetActualResult(invocation);
+            CalculateExpirationsAndAddValueToVolatileCache(key, result, settings, settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache);
+            InsertValueInPersistentCache(key, result, settings);
             return result;
         }
 
@@ -102,7 +102,7 @@ namespace WiseInterceptors.Interceptors.Cache
                 if (settings.FaultToleranceType == FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError && !valueFromCache.Persisted)
                 {
                     _cache.InsertInPersistentCache(key, valueFromCache.Value);
-                    AddValueToVolatileCache(key, valueFromCache.Value, settings, true);
+                    CalculateExpirationsAndAddValueToVolatileCache(key, valueFromCache.Value, settings, true);
                 }
                 return valueFromCache.Value;
             }
@@ -111,27 +111,27 @@ namespace WiseInterceptors.Interceptors.Cache
 
             if (valueFromPersistentCache != null)
             {
-                AddValueToVolatileCache(key, valueFromPersistentCache, settings, true);
+                CalculateExpirationsAndAddValueToVolatileCache(key, valueFromPersistentCache, settings, true);
                 return valueFromPersistentCache;
             }
 
             throw ex.InnerException;
         }
 
-        private void AddValueToVolatileCache(string key, object value, CacheSettings settings, bool persisted)
+        private void CalculateExpirationsAndAddValueToVolatileCache(string key, object value, CacheSettings settings, bool persisted)
         {
             var softExpiryDate = TimeProvider.Current.UtcNow.AddSeconds(settings.Duration);
             var hardExpiryDate = softExpiryDate.AddMinutes(2);
-            InsertValueInCache(key, value, softExpiryDate, hardExpiryDate, persisted);
+            InsertValueInVolatileCache(key, value, softExpiryDate, hardExpiryDate, persisted);
         }
 
-        private void AddValueToPersistentCache(string key, object value, CacheSettings settings)
+        private void InsertValueInPersistentCache(string key, object value, CacheSettings settings)
         {
             if (settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache)
                 _cache.InsertInPersistentCache(key, value);
         }
 
-        private void InsertValueInCache(string key, object returnValue, DateTime softExpiryDate, DateTime hardExpiryDate, bool persisted)
+        private void InsertValueInVolatileCache(string key, object returnValue, DateTime softExpiryDate, DateTime hardExpiryDate, bool persisted)
         {
             _cache.Insert(
                     key,
@@ -144,7 +144,7 @@ namespace WiseInterceptors.Interceptors.Cache
                     hardExpiryDate);
         }
 
-        private static bool IsCacheValueValid(CacheValue value)
+        private static bool IsValueFromVolatileCacheValid(CacheValue value)
         {
             return value.ExpiryDate >= TimeProvider.Current.UtcNow;
         }
@@ -152,10 +152,10 @@ namespace WiseInterceptors.Interceptors.Cache
         private void IncreaseSoftExpirationDateWhileQueryIsPerformed(string key, CacheValue value, bool persisted)
         {
             var softExpiryDate = TimeProvider.Current.UtcNow.AddSeconds(10);
-            InsertValueInCache(key, value.Value, softExpiryDate, softExpiryDate.AddMinutes(10), persisted);      
+            InsertValueInVolatileCache(key, value.Value, softExpiryDate, softExpiryDate.AddMinutes(10), persisted);      
         }
 
-        private CacheValue GetCacheValue(string key)
+        private CacheValue GetValueFromVolatileCache(string key)
         {
             return _cache.Get(key) as CacheValue;
         }
@@ -165,7 +165,7 @@ namespace WiseInterceptors.Interceptors.Cache
             return  string.IsNullOrEmpty(settings.Key) ? _helper.GetCallIdentifier(invocation) : settings.Key;
         }
 
-        private static object GetRealResult(IInvocation invocation)
+        private static object GetActualResult(IInvocation invocation)
         {
             try
             {
@@ -177,7 +177,5 @@ namespace WiseInterceptors.Interceptors.Cache
             }
             return invocation.ReturnValue;
         }
-
-        
     }
 }

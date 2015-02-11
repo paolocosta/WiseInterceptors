@@ -28,7 +28,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             var helper = Substitute.For<IHelper>();
             var invocationManager = Substitute.For<ICacheInvocationManager>();
             var invocation = Substitute.For<IInvocation>();
-            invocationManager.GetResult(invocation).Returns(1);
+            invocationManager.GetInvocationResult(invocation).Returns(1);
             var sut = new CacheInterceptor(cache, helper, invocationManager);
             sut.Intercept(invocation);
 

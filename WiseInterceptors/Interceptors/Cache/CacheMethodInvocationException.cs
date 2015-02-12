@@ -5,8 +5,8 @@ using System.Text;
 
 namespace WiseInterceptors.Interceptors.Cache
 {
-    internal class CacheMethodInvocationException : Exception
+    public class CacheMethodInvocationException : Exception
     {
-        internal CacheMethodInvocationException(Exception ex) : base(string.Empty, ex) { }
+        public CacheMethodInvocationException(Exception ex) : base(string.Empty, ex) { }
     }
 }

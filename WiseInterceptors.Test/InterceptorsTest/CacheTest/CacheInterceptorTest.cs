@@ -14,6 +14,7 @@ using NSubstitute;
 using Castle.DynamicProxy;
 using WiseInterceptors.Common;
 using System.Reflection;
+using WiseInterceptors.Interceptors.Cache.CacheInvocationMethodStrategies;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 {
@@ -21,18 +22,19 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
     [Category("Cache")]
     public class CacheInterceptorTest
     {
+        ///TODO ALL CACHE INVOCATION MANAGERS ARE TO TESTED
         [Test]
-        public void should_call_get_result()
+        public void should_Intercept_call_build()
         {
             var cache = Substitute.For<ICache>();
             var helper = Substitute.For<IHelper>();
-            var invocationManager = Substitute.For<ICacheInvocationManager>();
             var invocation = Substitute.For<IInvocation>();
-            invocationManager.GetInvocationResult(invocation).Returns(1);
-            var sut = new CacheInterceptor(cache, helper, invocationManager);
+            var invocationManagerFactory = Substitute.For<ICacheInvocationManagerFactory>();
+            invocationManagerFactory.Build(invocation).Returns(Substitute.For<ICacheInvocationManager>());
+            var sut = new CacheInterceptor(cache, helper, invocationManagerFactory);
             sut.Intercept(invocation);
 
-            invocation.ReturnValue.Should().Be(1);
+            invocationManagerFactory.Received().Build(invocation);
         }
     }
 }

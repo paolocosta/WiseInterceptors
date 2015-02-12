@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptors.Common;
+using WiseInterceptors.Interceptors.Cache.CacheInvocationMethodStrategies;
 
 namespace WiseInterceptors.Interceptors.Cache
 {
@@ -12,21 +13,22 @@ namespace WiseInterceptors.Interceptors.Cache
     {
         readonly ICache _Cache;
         readonly IHelper _helper;
-        readonly ICacheInvocationManager _invocationManager;
+        readonly ICacheInvocationManagerFactory _invocationManagerFactory;
 
         public CacheInterceptor(
             ICache cache, 
             IHelper helper, 
-            ICacheInvocationManager invocationManager)
+            ICacheInvocationManagerFactory invocationManagerFactory)
         {
             _Cache = cache;
             _helper = helper;
-            _invocationManager = invocationManager;
+            _invocationManagerFactory = invocationManagerFactory;
         }
 
         public void Intercept(IInvocation invocation)
         {
-            invocation.ReturnValue = _invocationManager.GetInvocationResult(invocation);
+            invocation.ReturnValue = _invocationManagerFactory.Build(invocation)
+                .GetInvocationResult(invocation);
         }
     }
 }

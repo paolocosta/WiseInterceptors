@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptors.Interceptors.Cache;
+using WiseInterceptors.Interceptors.Cache.CacheInvocationMethodStrategies;
 using WiseInterceptors.Interceptors.CircuitBreaker;
 using WiseInterceptors.Interceptors.MethodValidation;
 
@@ -15,7 +16,7 @@ namespace WiseInterceptors.Common
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<Helper>().As<IHelper>().InstancePerLifetimeScope();
-            builder.RegisterType<CacheInvocationManager>().As<ICacheInvocationManager>().InstancePerLifetimeScope();
+            builder.RegisterType<CacheInvocationManagerFactory>().As<ICacheInvocationManagerFactory>().InstancePerLifetimeScope();
             builder.RegisterType<CacheInterceptor>().InstancePerLifetimeScope();
             builder.RegisterType<CircuitBreakerInterceptor>().InstancePerLifetimeScope();
             builder.RegisterType<MethodValidationInterceptor>().InstancePerLifetimeScope();

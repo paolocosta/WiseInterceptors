@@ -14,7 +14,7 @@ namespace WiseInterceptors.Common
             return string.Format("{0}_{1}", invocation.Method.DeclaringType.FullName, invocation.Method.Name);
         }
 
-        public string GetCallIdentifier(IInvocation invocation)
+        public string GetUnivoqueCallIdentifier(IInvocation invocation)
         {
             return string.Format("{0}_{1}_{2}", invocation.Method.DeclaringType.FullName, invocation.Method.Name, SerializeArguments(invocation));
         }
@@ -36,7 +36,7 @@ namespace WiseInterceptors.Common
             return Newtonsoft.Json.JsonConvert.SerializeObject(invocation.Arguments);
         }
 
-        public bool IsReturnTypeVoid(IInvocation invocation)
+        public bool IsInvocationMethodReturnTypeVoid(IInvocation invocation)
         {
             return invocation.Method.ReturnType == typeof(void);
         }
@@ -50,7 +50,7 @@ namespace WiseInterceptors.Common
             return null;
         }
 
-        public bool HasInvocationAttribute<T>(IInvocation invocation) where T : Attribute
+        public bool HasInvocationMethodAttribute<T>(IInvocation invocation) where T : Attribute
         {
             return invocation.MethodInvocationTarget.GetCustomAttributes(typeof(T), false).Any();
         }

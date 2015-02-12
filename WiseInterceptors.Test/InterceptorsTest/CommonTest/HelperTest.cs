@@ -22,7 +22,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
             invocation.Method.Returns(typeof(DateTime).GetMethod("FromOADate"));
 
             var helper = new Helper();
-            helper.GetCallIdentifier(invocation).Should().Be("System.DateTime_FromOADate_[1,2,3]");
+            helper.GetUnivoqueCallIdentifier(invocation).Should().Be("System.DateTime_FromOADate_[1,2,3]");
         }
 
         [Test]

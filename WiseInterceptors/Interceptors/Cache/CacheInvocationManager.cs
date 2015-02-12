@@ -26,7 +26,7 @@ namespace WiseInterceptors.Interceptors.Cache
 
         private void FailIfInterceptedMethodReturnsVoid(IInvocation invocation)
         {
-            if (_helper.IsReturnTypeVoid(invocation))
+            if (_helper.IsInvocationMethodReturnTypeVoid(invocation))
             {
                 throw new InvalidOperationException(string.Format("Cache interceptor was added to method {0} but it is not allowed as it returns void",
                     _helper.GetMethodDescription(invocation)
@@ -48,7 +48,7 @@ namespace WiseInterceptors.Interceptors.Cache
             {
                 var key = GetInvocationKey(invocation, settings);
                 
-                var valueFromCache = GetValueFromVolatileCache(key);
+                var valueFromCache = RetrieveValueFromVolatileCache(key);
 
                 if (valueFromCache != null)
                 {
@@ -58,7 +58,7 @@ namespace WiseInterceptors.Interceptors.Cache
                     }
                     else
                     {
-                        IncreaseSoftExpirationDateWhileQueryIsPerformed(key, valueFromCache, false);
+                        IncreaseSoftExpirationDateWhileActualQueryIsPerformed(key, valueFromCache, false);
                     }
                 }
 
@@ -149,20 +149,20 @@ namespace WiseInterceptors.Interceptors.Cache
             return value.ExpiryDate >= TimeProvider.Current.UtcNow;
         }
 
-        private void IncreaseSoftExpirationDateWhileQueryIsPerformed(string key, CacheValue value, bool persisted)
+        private void IncreaseSoftExpirationDateWhileActualQueryIsPerformed(string key, CacheValue value, bool persisted)
         {
             var softExpiryDate = TimeProvider.Current.UtcNow.AddSeconds(10);
             InsertValueInVolatileCache(key, value.Value, softExpiryDate, softExpiryDate.AddMinutes(10), persisted);      
         }
 
-        private CacheValue GetValueFromVolatileCache(string key)
+        private CacheValue RetrieveValueFromVolatileCache(string key)
         {
             return _cache.Get(key) as CacheValue;
         }
 
         private string GetInvocationKey(IInvocation invocation, CacheSettings settings)
         {
-            return  string.IsNullOrEmpty(settings.Key) ? _helper.GetCallIdentifier(invocation) : settings.Key;
+            return  string.IsNullOrEmpty(settings.Key) ? _helper.GetUnivoqueCallIdentifier(invocation) : settings.Key;
         }
 
         private static object GetActualResult(IInvocation invocation)

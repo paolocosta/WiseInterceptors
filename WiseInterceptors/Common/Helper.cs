@@ -11,18 +11,19 @@ namespace WiseInterceptors.Common
     {
         public string GetMethodIdentifier(IInvocation invocation)
         {
-            return string.Format("{0}_{1}", invocation.Method.DeclaringType.FullName, invocation.Method.Name);
+            var method = invocation.GetConcreteMethodInvocationTarget();
+            return string.Format("{0}_{1}", method.DeclaringType.FullName, method.Name);
         }
 
         public string GetUnivoqueCallIdentifier(IInvocation invocation)
         {
-            return string.Format("{0}_{1}_{2}", invocation.Method.DeclaringType.FullName, invocation.Method.Name, SerializeArguments(invocation));
+            return string.Format("{0}_{1}", GetMethodIdentifier(invocation), SerializeArguments(invocation));
         }
 
         public T GetInvocationMethodAttribute<T>(IInvocation invocation) where T : Attribute
         {
             T value =
-                invocation.MethodInvocationTarget.GetCustomAttributes(typeof(T), false) 
+                invocation.GetConcreteMethodInvocationTarget().GetCustomAttributes(typeof(T), false) 
                 .FirstOrDefault() as T;
             return value;
         }
@@ -52,14 +53,14 @@ namespace WiseInterceptors.Common
 
         public bool HasInvocationMethodAttribute<T>(IInvocation invocation) where T : Attribute
         {
-            return invocation.MethodInvocationTarget.GetCustomAttributes(typeof(T), false).Any();
+            return invocation.GetConcreteMethodInvocationTarget().GetCustomAttributes(typeof(T), false).Any();
         }
 
         public string GetMethodDescription(IInvocation invocation)
         {
             return string.Format("{0}.{1}",
-                        invocation.MethodInvocationTarget.DeclaringType.FullName,
-                        invocation.MethodInvocationTarget.Name);
+                        invocation.Method.DeclaringType.FullName,
+                        invocation.Method.Name);
         }
     }
 }

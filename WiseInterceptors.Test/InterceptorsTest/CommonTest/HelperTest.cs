@@ -19,7 +19,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
         {
             var invocation = Substitute.For<IInvocation>();
             invocation.Arguments.Returns(new object[] { 1, 2, 3 });
-            invocation.Method.Returns(typeof(DateTime).GetMethod("FromOADate"));
+            invocation.GetConcreteMethodInvocationTarget().Returns(typeof(DateTime).GetMethod("FromOADate"));
 
             var helper = new Helper();
             helper.GetUnivoqueCallIdentifier(invocation).Should().Be("System.DateTime_FromOADate_[1,2,3]");
@@ -29,7 +29,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
         public void should_GetMethodIdentifier_return_correct_value()
         {
             var invocation = Substitute.For<IInvocation>();
-            invocation.Method.Returns(typeof(DateTime).GetMethod("FromOADate"));
+            invocation.GetConcreteMethodInvocationTarget().Returns(typeof(DateTime).GetMethod("FromOADate"));
 
             var helper = new Helper();
             helper.GetMethodIdentifier(invocation).Should().Be("System.DateTime_FromOADate");

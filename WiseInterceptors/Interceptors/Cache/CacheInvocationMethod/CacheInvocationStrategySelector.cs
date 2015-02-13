@@ -11,7 +11,7 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
 {
     public interface ICacheInvocationStrategySelector
     {
-        ICacheInvocationManager GetCacheManagerImplementation();
+        CacheInvocationManager GetCacheManagerImplementation();
     }
 
     public class CacheInvocationStrategySelector : ICacheInvocationStrategySelector
@@ -19,14 +19,14 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
         readonly ICache _cache;
         readonly IHelper _helper;
 
-        private Dictionary<FaultToleranceEnum, ICacheInvocationManager> _cacheInvocationManagerStrategies;
-        private Dictionary<FaultToleranceEnum, ICacheInvocationManager> CacheInvocationManagerStrategies
+        private Dictionary<FaultToleranceEnum, CacheInvocationManager> _cacheInvocationManagerStrategies;
+        private Dictionary<FaultToleranceEnum, CacheInvocationManager> CacheInvocationManagerStrategies
         {
             get
             {
                 if (_cacheInvocationManagerStrategies == null)
                 {
-                    _cacheInvocationManagerStrategies = new Dictionary<FaultToleranceEnum, ICacheInvocationManager>() 
+                    _cacheInvocationManagerStrategies = new Dictionary<FaultToleranceEnum, CacheInvocationManager>() 
                     { 
                         {FaultToleranceEnum.AlwaysUsePersistentCache, 
                             new Lazy<AlwaysUsePersistentCacheInvocationManager>
@@ -56,7 +56,7 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
             _helper = helper;            
         }
 
-        public ICacheInvocationManager GetCacheManagerImplementation()
+        public CacheInvocationManager GetCacheManagerImplementation()
         {            
             var faultToleranceStrategy = _cache.GetFaultToleranceStrategy();
             return CacheInvocationManagerStrategies[faultToleranceStrategy];

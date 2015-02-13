@@ -16,6 +16,11 @@ namespace WiseInterceptors.Interceptors.Cache.Strategies
             
         }
 
+        protected override bool IsPersistedByDefault
+        {
+            get { return false; }
+        }
+
         protected override object HandleInvocationException(CacheSettings settings, string key, CacheValue valueFromCache, CacheMethodInvocationException ex)
         {
             if (valueFromCache == null)
@@ -26,11 +31,6 @@ namespace WiseInterceptors.Interceptors.Cache.Strategies
             {
                 return valueFromCache.Value;
             }
-        }
-
-        protected override bool IsPersistedByDefault()
-        {
-            return false;
         }
 
         protected override void InsertValueInAnyRequiredCache(string key, object value, CacheSettings settings, bool persisted, DateTime softExpiryDate, DateTime hardExpiryDate)

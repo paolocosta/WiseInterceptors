@@ -19,7 +19,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         private ICache _cache;
         private IHelper _helper;
         private IInvocation _invocation;
-        private ICacheInvocationManager _sut;
+        private CacheInvocationManager _sut;
         private DateTime _time;
 
         public void Setup()

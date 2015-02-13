@@ -15,9 +15,9 @@ namespace WiseInterceptors.Interceptors.Cache.Strategies
 
         }
 
-        protected override bool IsPersistedByDefault()
+        protected override bool IsPersistedByDefault
         {
-            return false;
+            get { return false; }
         }
 
         protected override void InsertValueInAnyRequiredCache(string key, object value, CacheSettings settings, bool persisted, DateTime softExpiryDate, DateTime hardExpiryDate)

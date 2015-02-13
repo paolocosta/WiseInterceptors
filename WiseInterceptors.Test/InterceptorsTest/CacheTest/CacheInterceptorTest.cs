@@ -30,7 +30,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             var helper = Substitute.For<IHelper>();
             var invocation = Substitute.For<IInvocation>();
             var invocationManagerStrategySelector = Substitute.For<ICacheInvocationStrategySelector>();
-            invocationManagerStrategySelector.GetCacheManagerImplementation().Returns(Substitute.For<ICacheInvocationManager>());
+            invocationManagerStrategySelector.GetCacheManagerImplementation().Returns(Substitute.For<CacheInvocationManager>(cache, helper));
             var sut = new CacheInterceptor(cache, helper, invocationManagerStrategySelector);
             sut.Intercept(invocation);
 
@@ -44,7 +44,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             var helper = Substitute.For<IHelper>();
             var invocation = Substitute.For<IInvocation>();
             var invocationManagerStrategySelector = Substitute.For<ICacheInvocationStrategySelector>();
-            var cacheInvocationManager = Substitute.For<ICacheInvocationManager>();
+            var cacheInvocationManager = Substitute.For<CacheInvocationManager>(cache, helper);
 
             invocationManagerStrategySelector.GetCacheManagerImplementation().Returns(cacheInvocationManager);
             var sut = new CacheInterceptor(cache, helper, invocationManagerStrategySelector);

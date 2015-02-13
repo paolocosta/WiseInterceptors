@@ -8,12 +8,7 @@ using WiseInterceptors.Common;
 
 namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
 {
-    public interface ICacheInvocationManager
-    {
-        object GetInvocationResult(IInvocation invocation);
-    }
-
-    public abstract class CacheInvocationManager:ICacheInvocationManager
+    public abstract class CacheInvocationManager
     {
         protected readonly ICache _cache;
         protected readonly IHelper _helper;
@@ -24,7 +19,9 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
             _helper = helper;
         }
 
-        public object GetInvocationResult(IInvocation invocation)
+        protected abstract bool IsPersistedByDefault { get; }
+
+        public virtual object GetInvocationResult(IInvocation invocation)
         {
             this.FailIfInterceptedMethodReturnsVoid(invocation);
 
@@ -67,14 +64,12 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
 
         protected abstract object HandleInvocationException(CacheSettings settings, string key, CacheValue valueFromCache, CacheMethodInvocationException ex);
 
-        protected abstract bool IsPersistedByDefault();
-
         protected abstract void InsertValueInAnyRequiredCache(string key, object value, CacheSettings settings, bool persisted, DateTime softExpiryDate, DateTime hardExpiryDate);
 
         private object PerformActualCallProcess(IInvocation invocation, CacheSettings settings, string key)
         {
             var result = GetActualResult(invocation);
-            CalculateExpirationsAndAddValueToVolatileCache(key, result, settings, IsPersistedByDefault());
+            CalculateExpirationsAndAddValueToVolatileCache(key, result, settings, IsPersistedByDefault);
             
             return result;
         }

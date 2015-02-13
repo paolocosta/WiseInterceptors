@@ -16,15 +16,15 @@ namespace WiseInterceptors.Interceptors.Cache.Strategies
             
         }
 
+        protected override bool IsPersistedByDefault
+        {
+            get { return false; }
+        }
+
         protected override object HandleInvocationException(CacheSettings settings, string key, CacheValue valueFromCache, CacheMethodInvocationException ex)
         {
             _cache.Remove(key);
             throw ex.InnerException;
-        }
-
-        protected override bool IsPersistedByDefault()
-        {
-            return false;
         }
 
         protected override void InsertValueInAnyRequiredCache(string key, object value, CacheSettings settings, bool persisted, DateTime softExpiryDate, DateTime hardExpiryDate)

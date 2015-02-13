@@ -10,8 +10,8 @@ namespace WiseInterceptors.Interceptors.Cache.Strategies
 {
     public class ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager : CacheInvocationManager
     {
-        public ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager(ICache cache, IHelper helper, CacheSettings settings)
-            : base(cache, helper, settings)
+        public ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager(ICache cache, IHelper helper)
+            : base(cache, helper)
         {
             
         }

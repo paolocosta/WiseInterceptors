@@ -22,17 +22,16 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
     {
         protected readonly ICache _cache;
         protected readonly IHelper _helper;
-        protected readonly CacheSettings _settings;
-
-        public CacheInvocationManager(ICache cache, IHelper helper, CacheSettings settings)
+        
+        public CacheInvocationManager(ICache cache, IHelper helper)
         {
             _cache = cache;
             _helper = helper;
-            _settings = settings;
         }
 
         public object GetInvocationResult(IInvocation invocation)
         {
+            var _settings = _cache.GetSettings(invocation.MethodInvocationTarget, invocation.Arguments);
             if (!_settings.UseCache)
             {
                 return GetActualResult(invocation);

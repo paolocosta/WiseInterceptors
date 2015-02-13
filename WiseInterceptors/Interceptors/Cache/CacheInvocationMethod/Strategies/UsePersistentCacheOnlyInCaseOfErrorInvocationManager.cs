@@ -9,8 +9,8 @@ namespace WiseInterceptors.Interceptors.Cache.Strategies
 {
     public class UsePersistentCacheOnlyInCaseOfErrorInvocationManager:PersistentCacheGenericInvocationManager
     {
-        public UsePersistentCacheOnlyInCaseOfErrorInvocationManager(ICache cache, IHelper helper, CacheSettings settings)
-            : base(cache, helper, settings)
+        public UsePersistentCacheOnlyInCaseOfErrorInvocationManager(ICache cache, IHelper helper)
+            : base(cache, helper)
         {
 
         }

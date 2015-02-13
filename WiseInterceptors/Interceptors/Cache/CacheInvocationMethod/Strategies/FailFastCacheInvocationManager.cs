@@ -10,8 +10,8 @@ namespace WiseInterceptors.Interceptors.Cache.Strategies
 {
     public class FailFastCacheInvocationManager:CacheInvocationManager
     {
-        public FailFastCacheInvocationManager(ICache cache, IHelper helper, CacheSettings settings)
-            : base(cache, helper, settings)
+        public FailFastCacheInvocationManager(ICache cache, IHelper helper)
+            : base(cache, helper)
         {
             
         }

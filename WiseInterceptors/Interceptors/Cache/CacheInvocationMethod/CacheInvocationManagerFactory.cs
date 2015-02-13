@@ -31,16 +31,16 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
             switch (_faultToleranceStrategy)
             {
                 case FaultToleranceEnum.FailFastWithNoRecovery: 
-                    return new FailFastCacheInvocationManager(_cache, _helper, settings); 
+                    return new FailFastCacheInvocationManager(_cache, _helper); 
                     break;
                 case FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors: 
-                    return new ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager(_cache, _helper, settings); 
+                    return new ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager(_cache, _helper); 
                     break;
                 case FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError: 
-                    return new UsePersistentCacheOnlyInCaseOfErrorInvocationManager(_cache, _helper, settings); 
+                    return new UsePersistentCacheOnlyInCaseOfErrorInvocationManager(_cache, _helper); 
                     break;
                 case FaultToleranceEnum.AlwaysUsePersistentCache: 
-                    return new AlwaysUsePersistentCacheInvocationManager(_cache, _helper, settings); 
+                    return new AlwaysUsePersistentCacheInvocationManager(_cache, _helper); 
                     break;
             }
 

@@ -33,8 +33,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
         public void should_resolve_ICacheInvocationManagerFactory()
         {
             var builder = new ContainerBuilder();
-            var cache = Substitute.For<ICache>();
-            builder.RegisterType(cache.GetType()).As(typeof(ICache));
+            builder.RegisterType<DummyCache>().As<ICache>();
             builder.RegisterModule<InterceptorModule>();
             var container = builder.Build();
             var scope = container.BeginLifetimeScope();
@@ -46,8 +45,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
         public void should_resolve_CacheInterceptor()
         {
             var builder = new ContainerBuilder();
-            var cache = Substitute.For<ICache>();
-            builder.RegisterType(cache.GetType()).As(typeof(ICache));
+            builder.RegisterType<DummyCache>().As<ICache>();
             builder.RegisterModule<InterceptorModule>();
             var container = builder.Build();
             var scope = container.BeginLifetimeScope();
@@ -82,6 +80,44 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
             var scope = container.BeginLifetimeScope();
             var helper = scope.Resolve<MethodValidationInterceptor>();
             helper.GetType().Should().Be(typeof(MethodValidationInterceptor));
+        }
+    }
+
+    internal class DummyCache : ICache
+    {
+        public void Insert(string Key, object Value, DateTime Expiration)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object Get(string Key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Remove(string Key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InsertInPersistentCache(string Key, object Value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object GetFromPersistentCache(string Key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FaultToleranceEnum GetFaultToleranceStrategy()
+        {
+            return FaultToleranceEnum.FailFastWithNoRecovery;
         }
     }
 }

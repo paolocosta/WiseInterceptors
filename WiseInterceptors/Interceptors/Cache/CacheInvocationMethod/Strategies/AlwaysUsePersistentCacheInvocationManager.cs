@@ -9,8 +9,8 @@ namespace WiseInterceptors.Interceptors.Cache.Strategies
 {
     public class AlwaysUsePersistentCacheInvocationManager:PersistentCacheGenericInvocationManager
     {
-        public AlwaysUsePersistentCacheInvocationManager(ICache cache, IHelper helper, CacheSettings settings)
-            : base(cache, helper, settings)
+        public AlwaysUsePersistentCacheInvocationManager(ICache cache, IHelper helper)
+            : base(cache, helper)
         {
 
         }

@@ -29,12 +29,12 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             var cache = Substitute.For<ICache>();
             var helper = Substitute.For<IHelper>();
             var invocation = Substitute.For<IInvocation>();
-            var invocationManagerFactory = Substitute.For<ICacheInvocationManagerFactory>();
-            invocationManagerFactory.Build(invocation).Returns(Substitute.For<ICacheInvocationManager>());
-            var sut = new CacheInterceptor(cache, helper, invocationManagerFactory);
+            var invocationManagerStrategySelector = Substitute.For<ICacheInvocationStrategySelector>();
+            invocationManagerStrategySelector.GetCacheManagerImplementation().Returns(Substitute.For<ICacheInvocationManager>());
+            var sut = new CacheInterceptor(cache, helper, invocationManagerStrategySelector);
             sut.Intercept(invocation);
 
-            invocationManagerFactory.Received().Build(invocation);
+            invocationManagerStrategySelector.Received().GetCacheManagerImplementation();
         }
 
         [Test]
@@ -43,11 +43,11 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             var cache = Substitute.For<ICache>();
             var helper = Substitute.For<IHelper>();
             var invocation = Substitute.For<IInvocation>();
-            var invocationManagerFactory = Substitute.For<ICacheInvocationManagerFactory>();
+            var invocationManagerStrategySelector = Substitute.For<ICacheInvocationStrategySelector>();
             var cacheInvocationManager = Substitute.For<ICacheInvocationManager>();
 
-            invocationManagerFactory.Build(invocation).Returns(cacheInvocationManager);
-            var sut = new CacheInterceptor(cache, helper, invocationManagerFactory);
+            invocationManagerStrategySelector.GetCacheManagerImplementation().Returns(cacheInvocationManager);
+            var sut = new CacheInterceptor(cache, helper, invocationManagerStrategySelector);
             sut.Intercept(invocation);
 
             cacheInvocationManager.Received().GetInvocationResult(invocation);

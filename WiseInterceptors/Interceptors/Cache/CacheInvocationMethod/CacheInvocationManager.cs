@@ -13,11 +13,6 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
         object GetInvocationResult(IInvocation invocation);
     }
 
-    public interface ICacheInvocationManagerFactory
-    {
-        ICacheInvocationManager Build(IInvocation invocation);
-    }
-
     public abstract class CacheInvocationManager:ICacheInvocationManager
     {
         protected readonly ICache _cache;
@@ -31,6 +26,8 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
 
         public object GetInvocationResult(IInvocation invocation)
         {
+            this.FailIfInterceptedMethodReturnsVoid(invocation);
+
             var _settings = _cache.GetSettings(invocation.MethodInvocationTarget, invocation.Arguments);
             if (!_settings.UseCache)
             {
@@ -139,6 +136,16 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
                 throw new CacheMethodInvocationException(ex);
             }
             return invocation.ReturnValue;
+        }
+
+        private void FailIfInterceptedMethodReturnsVoid(IInvocation invocation)
+        {
+            if (_helper.IsInvocationMethodReturnTypeVoid(invocation))
+            {
+                throw new InvalidOperationException(string.Format("Cache interceptor was added to method {0} but it is not allowed as it returns void",
+                    _helper.GetMethodDescription(invocation)
+                    ));
+            }
         }
     }
 }

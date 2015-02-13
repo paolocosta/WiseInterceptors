@@ -14,21 +14,21 @@ namespace WiseInterceptors.Interceptors.Cache
     {
         readonly ICache _Cache;
         readonly IHelper _helper;
-        readonly ICacheInvocationManagerFactory _invocationManagerFactory;
+        readonly ICacheInvocationStrategySelector _invocationStrategySelector;
 
         public CacheInterceptor(
             ICache cache, 
-            IHelper helper, 
-            ICacheInvocationManagerFactory invocationManagerFactory)
+            IHelper helper,
+            ICacheInvocationStrategySelector invocationStrategySelector)
         {
             _Cache = cache;
             _helper = helper;
-            _invocationManagerFactory = invocationManagerFactory;
+            _invocationStrategySelector = invocationStrategySelector;
         }
 
         public void Intercept(IInvocation invocation)
         {
-            var cacheInvocationManager = _invocationManagerFactory.Build(invocation);
+            var cacheInvocationManager = _invocationStrategySelector.GetCacheManagerImplementation();
             invocation.ReturnValue = cacheInvocationManager.GetInvocationResult(invocation);
         }
     }

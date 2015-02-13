@@ -14,7 +14,7 @@ using FluentAssertions;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 {
-    public class CacheInvocationManagerFactoryTest
+    public class CacheInvocationStrategySelectorTest
     {
         [Test]
         [TestCase(FaultToleranceEnum.AlwaysUsePersistentCache, typeof(AlwaysUsePersistentCacheInvocationManager))]
@@ -27,8 +27,8 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             var helper = Substitute.For<IHelper>();
             var invocation = Substitute.For<IInvocation>();
             cache.GetFaultToleranceStrategy().Returns(faultTolerance);
-            var sut = new CacheInvocationManagerFactory(cache, helper);
-            var manager = sut.Build(invocation);
+            var sut = new CacheInvocationStrategySelector(cache, helper);
+            var manager = sut.GetCacheManagerImplementation();
             manager.GetType().Should().Be(expectedManagerType);
         }
     }

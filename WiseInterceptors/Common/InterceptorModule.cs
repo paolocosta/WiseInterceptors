@@ -17,7 +17,7 @@ namespace WiseInterceptors.Common
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<Helper>().As<IHelper>().InstancePerLifetimeScope();
-            builder.RegisterType<CacheInvocationManagerFactory>().As<ICacheInvocationManagerFactory>().InstancePerLifetimeScope();
+            builder.RegisterType<CacheInvocationStrategySelector>().As<ICacheInvocationStrategySelector>().InstancePerLifetimeScope();
             builder.RegisterType<CacheInterceptor>().InstancePerLifetimeScope();
             builder.RegisterType<CircuitBreakerInterceptor>().InstancePerLifetimeScope();
             builder.RegisterType<MethodValidationInterceptor>().InstancePerLifetimeScope();

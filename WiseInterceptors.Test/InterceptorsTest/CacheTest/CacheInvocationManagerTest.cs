@@ -50,8 +50,8 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             _time = new DateTime(2000, 1, 1);
             TimeProvider.Current.UtcNow.Returns(_time);
 
-            _sut = new CacheInvocationManagerFactory(_cache, _helper)
-                .Build(_invocation);
+            _sut = new CacheInvocationStrategySelector(_cache, _helper)
+                .GetCacheManagerImplementation();
         }
 
         [Test]
@@ -61,9 +61,11 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
             _cache = Substitute.For<ICache>();
             _helper = Substitute.For<IHelper>();
             _helper.IsInvocationMethodReturnTypeVoid(Arg.Any<IInvocation>()).Returns(true);
+            
+            _sut = new CacheInvocationStrategySelector(_cache, _helper)
+                .GetCacheManagerImplementation();
 
-            _sut = new CacheInvocationManagerFactory(_cache, _helper)
-                .Build(_invocation);
+            _sut.GetInvocationResult(_invocation);
             
         }
 

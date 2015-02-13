@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WiseInterceptors.Interceptors.Cache;
+using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
+using WiseInterceptors.Interceptors.Cache.Strategies;
 
 namespace WiseInterceptors.Common
 {
@@ -62,5 +65,10 @@ namespace WiseInterceptors.Common
                         invocation.Method.DeclaringType.FullName,
                         invocation.Method.Name);
         }
+
+        //public ICacheInvocationManager GetCacheInvocationManagerImplementation(Interceptors.Cache.FaultToleranceEnum faultTolerance)
+        //{
+        //    return CacheInvocationManagerStrategies[faultTolerance];
+        //}
     }
 }

@@ -30,15 +30,15 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
         }
 
         [Test]
-        public void should_resolve_ICacheInvocationManagerFactory()
+        public void should_resolve_ICacheInvocationStrategySelector()
         {
             var builder = new ContainerBuilder();
             builder.RegisterType<DummyCache>().As<ICache>();
             builder.RegisterModule<InterceptorModule>();
             var container = builder.Build();
             var scope = container.BeginLifetimeScope();
-            var helper = scope.Resolve<ICacheInvocationManagerFactory>();
-            helper.GetType().Should().Be(typeof(CacheInvocationManagerFactory));
+            var helper = scope.Resolve<ICacheInvocationStrategySelector>();
+            helper.GetType().Should().Be(typeof(CacheInvocationStrategySelector));
         }
 
         [Test]

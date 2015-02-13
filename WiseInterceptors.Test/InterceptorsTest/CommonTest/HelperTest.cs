@@ -8,12 +8,23 @@ using NSubstitute;
 using Castle.DynamicProxy;
 using FluentAssertions;
 using WiseInterceptors.Common;
+using WiseInterceptors.Interceptors.Cache;
+using WiseInterceptors.Interceptors.Cache.Strategies;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
 {
     [TestFixture]
     class HelperTest
     {
+        private Helper _helper;
+
+        [SetUp]
+        public void Setup()
+        {
+            var cache = Substitute.For<ICache>();
+            _helper = new Helper();
+        }
+
         [Test]
         public void should_GetCallIdentifier_return_correct_value()
         {
@@ -21,8 +32,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
             invocation.Arguments.Returns(new object[] { 1, 2, 3 });
             invocation.GetConcreteMethodInvocationTarget().Returns(typeof(DateTime).GetMethod("FromOADate"));
 
-            var helper = new Helper();
-            helper.GetUnivoqueCallIdentifier(invocation).Should().Be("System.DateTime_FromOADate_[1,2,3]");
+            _helper.GetUnivoqueCallIdentifier(invocation).Should().Be("System.DateTime_FromOADate_[1,2,3]");
         }
 
         [Test]
@@ -31,22 +41,30 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
             var invocation = Substitute.For<IInvocation>();
             invocation.GetConcreteMethodInvocationTarget().Returns(typeof(DateTime).GetMethod("FromOADate"));
 
-            var helper = new Helper();
-            helper.GetMethodIdentifier(invocation).Should().Be("System.DateTime_FromOADate");
+            _helper.GetMethodIdentifier(invocation).Should().Be("System.DateTime_FromOADate");
         }
 
         [Test]
         public void should_GetDefaultValue_return_0_for_a_value_type()
         {
-            var sut = new Helper();
-            sut.GetDefaultValue(typeof(Int32)).Should().Be(0);
+            _helper.GetDefaultValue(typeof(Int32)).Should().Be(0);
         }
 
         [Test]
         public void should_GetDefaultValue_return_null_for_a_reference_type()
         {
-            var sut = new Helper();
-            sut.GetDefaultValue(typeof(System.IO.MemoryStream)).Should().Be(null);
+            _helper.GetDefaultValue(typeof(System.IO.MemoryStream)).Should().Be(null);
         }
+
+        //[Test]
+        //[TestCase(FaultToleranceEnum.AlwaysUsePersistentCache, typeof(AlwaysUsePersistentCacheInvocationManager))]
+        //[TestCase(FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors, typeof(ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager))]
+        //[TestCase(FaultToleranceEnum.FailFastWithNoRecovery, typeof(FailFastCacheInvocationManager))]
+        //[TestCase(FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError, typeof(UsePersistentCacheOnlyInCaseOfErrorInvocationManager))]
+        //public void should_GetCacheInvocationManagerImplementation_retrn_the_correct_result(FaultToleranceEnum faultTolerance, Type cacheInvocationManagerType)
+        //{
+        //    var cacheInvocationManager = _helper.GetCacheInvocationManagerImplementation(faultTolerance, cacheInvocationManagerType);
+        //    cacheInvocationManager.Should().BeOfType(cacheInvocationManagerType);
+        //}
     }
 }

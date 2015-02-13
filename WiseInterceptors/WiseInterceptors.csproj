@@ -58,7 +58,7 @@
     <Compile Include="Common\TimeProvider.cs" />
     <Compile Include="Interceptors\Cache\CacheInterceptor.cs" />
     <Compile Include="Interceptors\Cache\CacheInvocationMethod\Strategies\AlwaysUsePersistentCacheInvocationManager.cs" />
-    <Compile Include="Interceptors\Cache\CacheInvocationMethod\CacheInvocationManagerFactory.cs" />
+    <Compile Include="Interceptors\Cache\CacheInvocationMethod\CacheInvocationStrategySelector.cs" />
     <Compile Include="Interceptors\Cache\CacheInvocationMethod\Strategies\ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager.cs" />
     <Compile Include="Interceptors\Cache\CacheInvocationMethod\Strategies\FailFastCacheInvocationManager.cs" />
     <Compile Include="Interceptors\Cache\CacheInvocationMethod\Strategies\PersistentCacheGenericInvocationManager.cs" />

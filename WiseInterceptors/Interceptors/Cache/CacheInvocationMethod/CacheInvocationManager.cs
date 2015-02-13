@@ -92,8 +92,7 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
 
         protected void InsertValueInPersistentCache(string key, object value, CacheSettings settings)
         {
-            if (settings.FaultToleranceType == FaultToleranceEnum.AlwaysUsePersistentCache)
-                _cache.InsertInPersistentCache(key, value);
+             _cache.InsertInPersistentCache(key, value);
         }
 
         protected void InsertValueInVolatileCache(string key, object returnValue, DateTime softExpiryDate, DateTime hardExpiryDate, bool persisted)

@@ -80,6 +80,21 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
         }
 
         [Test]
+        [TestCase(FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors)]
+        [TestCase(FaultToleranceEnum.FailFastWithNoRecovery)]
+        [TestCase(FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError)]
+        public void should_not_write_in_persistent_cache_when_settings_are_not_configured_for_default_persistence_and_method_is_called(FaultToleranceEnum faultTolerance)
+        {
+            SetupBySettings(new CacheSettings { Duration = 20 * 60, Priority = PriorityEnum.Normal, FaultToleranceType = faultTolerance, UseCache = true });
+
+            _invocation.ReturnValue.Returns(2);
+
+            _sut.GetInvocationResult(_invocation);
+
+            _cache.DidNotReceive().InsertInPersistentCache(Arg.Any<string>(), Arg.Any<object>());
+        }
+
+        [Test]
         [TestCase(FaultToleranceEnum.AlwaysUsePersistentCache, true)]
         [TestCase(FaultToleranceEnum.FailFastWithNoRecovery, false)]
         [TestCase(FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors, false)]

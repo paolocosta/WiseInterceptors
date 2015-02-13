@@ -43,7 +43,8 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
                     break;
             }
 
-            return null;
+            throw new ApplicationException("    This line of code should never be reached. Maybe a new value has been added to the " + 
+                                           "    FaultToleranceEnum but not handled by CacheInvocationManagerFactory                ");
         }
 
         private void FailIfInterceptedMethodReturnsVoid(IInvocation invocation)

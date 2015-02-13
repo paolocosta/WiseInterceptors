@@ -26,7 +26,6 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
         public ICacheInvocationManager Build(IInvocation invocation)
         {
             this.FailIfInterceptedMethodReturnsVoid(invocation);
-            CacheSettings settings = _cache.GetSettings(invocation.MethodInvocationTarget, invocation.Arguments);
             
             switch (_faultToleranceStrategy)
             {

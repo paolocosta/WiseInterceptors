@@ -23,18 +23,10 @@ namespace WiseInterceptors.Interceptors.Cache
 
     public class CacheSettings
     {
-        public CacheSettings()
-        {
-            Duration = 20 * 60;
-            Priority = PriorityEnum.Normal;
-        }
-
         public int Duration { get; set; }
         public PriorityEnum Priority { get; set; }
         public FaultToleranceEnum FaultToleranceType { get; set; }
         public bool UseCache { get; set; }
-
         public string Key { get; set; }
     }
-
 }

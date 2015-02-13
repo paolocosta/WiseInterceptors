@@ -28,8 +28,8 @@ namespace WiseInterceptors.Interceptors.Cache
 
         public void Intercept(IInvocation invocation)
         {
-            invocation.ReturnValue = _invocationManagerFactory.Build(invocation)
-                .GetInvocationResult(invocation);
+            var cacheInvocationManager = _invocationManagerFactory.Build(invocation);
+            invocation.ReturnValue = cacheInvocationManager.GetInvocationResult(invocation);
         }
     }
 }

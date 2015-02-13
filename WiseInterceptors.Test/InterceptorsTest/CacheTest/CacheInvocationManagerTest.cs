@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using WiseInterceptors.Common;
 using WiseInterceptors.Interceptors.Cache;
 using FluentAssertions;
-using WiseInterceptors.Interceptors.Cache.CacheInvocationMethodStrategies;
+using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 {

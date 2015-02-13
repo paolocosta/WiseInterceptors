@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptors.Common;
 
-namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethodStrategies
+namespace WiseInterceptors.Interceptors.Cache.Strategies
 {
     public class AlwaysUsePersistentCacheInvocationManager:PersistentCacheGenericInvocationManager
     {

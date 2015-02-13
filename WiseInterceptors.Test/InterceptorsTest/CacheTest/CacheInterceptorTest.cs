@@ -14,7 +14,7 @@ using NSubstitute;
 using Castle.DynamicProxy;
 using WiseInterceptors.Common;
 using System.Reflection;
-using WiseInterceptors.Interceptors.Cache.CacheInvocationMethodStrategies;
+using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 {

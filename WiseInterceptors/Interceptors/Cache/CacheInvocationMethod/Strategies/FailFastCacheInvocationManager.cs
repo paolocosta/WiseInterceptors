@@ -4,15 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptors.Common;
+using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
 
-namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethodStrategies
+namespace WiseInterceptors.Interceptors.Cache.Strategies
 {
-    public class UsePersistentCacheOnlyInCaseOfErrorInvocationManager:PersistentCacheGenericInvocationManager
+    public class FailFastCacheInvocationManager:CacheInvocationManager
     {
-        public UsePersistentCacheOnlyInCaseOfErrorInvocationManager(ICache cache, IHelper helper, CacheSettings settings)
+        public FailFastCacheInvocationManager(ICache cache, IHelper helper, CacheSettings settings)
             : base(cache, helper, settings)
         {
+            
+        }
 
+        protected override object HandleInvocationException(CacheSettings settings, string key, CacheValue valueFromCache, CacheMethodInvocationException ex)
+        {
+            _cache.Remove(key);
+            throw ex.InnerException;
         }
 
         protected override bool IsPersistedByDefault()
@@ -23,7 +30,6 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethodStrategies
         protected override void InsertValueInAnyRequiredCache(string key, object value, CacheSettings settings, bool persisted, DateTime softExpiryDate, DateTime hardExpiryDate)
         {
             InsertValueInVolatileCache(key, value, softExpiryDate, hardExpiryDate, persisted);
-            InsertValueInPersistentCache(key, value, settings);
         }
     }
 }

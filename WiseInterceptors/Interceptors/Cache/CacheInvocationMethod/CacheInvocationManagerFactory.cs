@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptors.Common;
+using WiseInterceptors.Interceptors.Cache.Strategies;
 
-namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethodStrategies
+namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
 {
     public class CacheInvocationManagerFactory : ICacheInvocationManagerFactory
     {

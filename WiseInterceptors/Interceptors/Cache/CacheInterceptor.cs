@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WiseInterceptors.Common;
-using WiseInterceptors.Interceptors.Cache.CacheInvocationMethodStrategies;
+using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
+using WiseInterceptors.Interceptors.Cache.Strategies;
 
 namespace WiseInterceptors.Interceptors.Cache
 {

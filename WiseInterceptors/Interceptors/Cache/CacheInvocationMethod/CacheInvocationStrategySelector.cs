@@ -28,10 +28,22 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
                 {
                     _cacheInvocationManagerStrategies = new Dictionary<FaultToleranceEnum, ICacheInvocationManager>() 
                     { 
-                        {FaultToleranceEnum.AlwaysUsePersistentCache, new Lazy<AlwaysUsePersistentCacheInvocationManager>(()=> new AlwaysUsePersistentCacheInvocationManager(_cache, _helper)).Value },
-                        {FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors, new Lazy<ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager>(()=> new ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager(_cache, _helper)).Value },
-                        {FaultToleranceEnum.FailFastWithNoRecovery, new Lazy<FailFastCacheInvocationManager>(()=> new FailFastCacheInvocationManager(_cache, _helper)).Value },
-                        {FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError, new Lazy<UsePersistentCacheOnlyInCaseOfErrorInvocationManager>(()=> new UsePersistentCacheOnlyInCaseOfErrorInvocationManager(_cache, _helper)).Value }
+                        {FaultToleranceEnum.AlwaysUsePersistentCache, 
+                            new Lazy<AlwaysUsePersistentCacheInvocationManager>
+                                (()=> new AlwaysUsePersistentCacheInvocationManager(_cache, _helper)).Value 
+                        },
+                        {FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors, 
+                            new Lazy<ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager>(
+                                ()=> new ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager(_cache, _helper)).Value 
+                        },
+                        {FaultToleranceEnum.FailFastWithNoRecovery, 
+                            new Lazy<FailFastCacheInvocationManager>(
+                                ()=> new FailFastCacheInvocationManager(_cache, _helper)).Value 
+                        },
+                        {FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError, 
+                            new Lazy<UsePersistentCacheOnlyInCaseOfErrorInvocationManager>(
+                                ()=> new UsePersistentCacheOnlyInCaseOfErrorInvocationManager(_cache, _helper)).Value 
+                        }
                     };
                 }
                 return _cacheInvocationManagerStrategies;

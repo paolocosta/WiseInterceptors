@@ -8,7 +8,7 @@ using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
 
 namespace WiseInterceptors.Interceptors.Cache.Strategies
 {
-    class ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager : CacheInvocationManager
+    public class ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager : CacheInvocationManager
     {
         public ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager(ICache cache, IHelper helper, CacheSettings settings)
             : base(cache, helper, settings)

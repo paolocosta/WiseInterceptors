@@ -50,5 +50,11 @@ namespace CacheDemo
         {
             return Program._Form1.GetCacheSettings();
         }
+
+
+        public WiseInterceptors.Interceptors.Cache.FaultToleranceEnum GetFaultToleranceStrategy()
+        {
+            return Program._Form1.GetFaultTolerance();
+        }
     }
 }

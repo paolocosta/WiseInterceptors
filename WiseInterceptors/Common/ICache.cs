@@ -21,5 +21,7 @@ namespace WiseInterceptors.Common
         object GetFromPersistentCache(string Key);
 
         CacheSettings GetSettings(MethodInfo method, object[] arguments);
+
+        FaultToleranceEnum GetFaultToleranceStrategy();
     }
 }

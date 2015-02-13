@@ -45,13 +45,12 @@ namespace CacheDemo
             {
                 Duration = (int)Duration.Value,
                 Priority = PriorityEnum.Normal,
-                UseCache = UseCache.Checked,
-                FaultToleranceType = GetFaultTolerance(),
+                UseCache = UseCache.Checked,                
                 Key = "Key"
             };
         }
 
-        private FaultToleranceEnum GetFaultTolerance()
+        public FaultToleranceEnum GetFaultTolerance()
         {
             foreach(RadioButton c in FaultTolerance.Controls)
             {

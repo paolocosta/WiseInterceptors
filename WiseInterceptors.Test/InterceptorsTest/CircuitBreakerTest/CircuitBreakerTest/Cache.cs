@@ -54,5 +54,11 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         {
             throw new NotImplementedException();
         }
+
+
+        public Interceptors.Cache.FaultToleranceEnum GetFaultToleranceStrategy()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

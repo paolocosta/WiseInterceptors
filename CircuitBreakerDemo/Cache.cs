@@ -50,5 +50,11 @@ namespace CircuitBreakerDemo
         {
             throw new NotImplementedException();
         }
+
+
+        public WiseInterceptors.Interceptors.Cache.FaultToleranceEnum GetFaultToleranceStrategy()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

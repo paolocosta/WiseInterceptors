@@ -13,19 +13,22 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
     {
         readonly ICache _cache;
         readonly IHelper _helper;
+        readonly FaultToleranceEnum _faultToleranceStrategy;
+
 
         public CacheInvocationManagerFactory(ICache cache, IHelper helper)
         {
             _cache = cache;
             _helper = helper;
+            _faultToleranceStrategy = _cache.GetFaultToleranceStrategy();
         }
 
         public ICacheInvocationManager Build(IInvocation invocation)
         {
             this.FailIfInterceptedMethodReturnsVoid(invocation);
             CacheSettings settings = _cache.GetSettings(invocation.MethodInvocationTarget, invocation.Arguments);
-
-            switch (settings.FaultToleranceType)
+            
+            switch (_faultToleranceStrategy)
             {
                 case FaultToleranceEnum.FailFastWithNoRecovery: 
                     return new FailFastCacheInvocationManager(_cache, _helper, settings); 

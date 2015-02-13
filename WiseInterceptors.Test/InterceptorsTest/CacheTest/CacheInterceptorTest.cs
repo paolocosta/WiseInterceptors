@@ -36,5 +36,21 @@ namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 
             invocationManagerFactory.Received().Build(invocation);
         }
+
+        [Test]
+        public void should_Intercept_call_GetInvocationResult()
+        {
+            var cache = Substitute.For<ICache>();
+            var helper = Substitute.For<IHelper>();
+            var invocation = Substitute.For<IInvocation>();
+            var invocationManagerFactory = Substitute.For<ICacheInvocationManagerFactory>();
+            var cacheInvocationManager = Substitute.For<ICacheInvocationManager>();
+
+            invocationManagerFactory.Build(invocation).Returns(cacheInvocationManager);
+            var sut = new CacheInterceptor(cache, helper, invocationManagerFactory);
+            sut.Intercept(invocation);
+
+            cacheInvocationManager.Received().GetInvocationResult(invocation);
+        }
     }
 }

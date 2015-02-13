@@ -65,10 +65,5 @@ namespace WiseInterceptors.Common
                         invocation.Method.DeclaringType.FullName,
                         invocation.Method.Name);
         }
-
-        //public ICacheInvocationManager GetCacheInvocationManagerImplementation(Interceptors.Cache.FaultToleranceEnum faultTolerance)
-        //{
-        //    return CacheInvocationManagerStrategies[faultTolerance];
-        //}
     }
 }

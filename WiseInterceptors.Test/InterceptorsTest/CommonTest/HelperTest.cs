@@ -55,16 +55,5 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
         {
             _helper.GetDefaultValue(typeof(System.IO.MemoryStream)).Should().Be(null);
         }
-
-        //[Test]
-        //[TestCase(FaultToleranceEnum.AlwaysUsePersistentCache, typeof(AlwaysUsePersistentCacheInvocationManager))]
-        //[TestCase(FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors, typeof(ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager))]
-        //[TestCase(FaultToleranceEnum.FailFastWithNoRecovery, typeof(FailFastCacheInvocationManager))]
-        //[TestCase(FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError, typeof(UsePersistentCacheOnlyInCaseOfErrorInvocationManager))]
-        //public void should_GetCacheInvocationManagerImplementation_retrn_the_correct_result(FaultToleranceEnum faultTolerance, Type cacheInvocationManagerType)
-        //{
-        //    var cacheInvocationManager = _helper.GetCacheInvocationManagerImplementation(faultTolerance, cacheInvocationManagerType);
-        //    cacheInvocationManager.Should().BeOfType(cacheInvocationManagerType);
-        //}
     }
 }

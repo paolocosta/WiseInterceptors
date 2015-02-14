@@ -19,6 +19,12 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
         readonly ICache _cache;
         readonly IHelper _helper;
 
+        public CacheInvocationStrategySelector(ICache cache, IHelper helper)
+        {
+            _cache = cache;
+            _helper = helper;
+        }
+
         private Dictionary<FaultToleranceEnum, CacheInvocationManager> _cacheInvocationManagerStrategies;
         private Dictionary<FaultToleranceEnum, CacheInvocationManager> CacheInvocationManagerStrategies
         {
@@ -48,12 +54,6 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
                 }
                 return _cacheInvocationManagerStrategies;
             }
-        }
-         
-        public CacheInvocationStrategySelector(ICache cache, IHelper helper)
-        {
-            _cache = cache;
-            _helper = helper;            
         }
 
         public CacheInvocationManager GetCacheManagerImplementation()

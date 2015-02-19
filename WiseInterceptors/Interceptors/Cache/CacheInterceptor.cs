@@ -12,7 +12,7 @@ namespace WiseInterceptors.Interceptors.Cache
 {
     public class CacheInterceptor : IInterceptor
     {
-        readonly ICache _Cache;
+        readonly ICache _cache;
         readonly IHelper _helper;
         readonly ICacheInvocationStrategySelector _invocationStrategySelector;
 
@@ -21,7 +21,7 @@ namespace WiseInterceptors.Interceptors.Cache
             IHelper helper,
             ICacheInvocationStrategySelector invocationStrategySelector)
         {
-            _Cache = cache;
+            _cache = cache;
             _helper = helper;
             _invocationStrategySelector = invocationStrategySelector;
         }

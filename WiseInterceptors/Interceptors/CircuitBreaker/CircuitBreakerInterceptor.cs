@@ -12,13 +12,13 @@ namespace WiseInterceptors.Interceptors.CircuitBreaker
     
     public class CircuitBreakerInterceptor:IInterceptor
     {
-        ICache _Cache;
+        ICache _cache;
         IHelper _helper;
         ICircuitBreakerSettingsReader _circuitBreakerSettingsReader;
 
         public CircuitBreakerInterceptor(ICache cache, IHelper helper, ICircuitBreakerSettingsReader circuitBreakerSettingsReader)
         {
-            _Cache = cache;
+            _cache = cache;
             _helper = helper;
             _circuitBreakerSettingsReader = circuitBreakerSettingsReader;
         }
@@ -71,10 +71,10 @@ namespace WiseInterceptors.Interceptors.CircuitBreaker
 
         private void BreakCircuit(IInvocation invocation, CircuitBreaker circuitBreaker)
         {
-            _Cache.Remove(_helper.GetMethodIdentifier(invocation));
+            _cache.Remove(_helper.GetMethodIdentifier(invocation));
             circuitBreaker.Status = CircuitBreakerStatusEnum.Breaked;
             circuitBreaker.BreakDate = TimeProvider.Current.UtcNow;
-            _Cache.Insert(_helper.GetMethodIdentifier(invocation), circuitBreaker, TimeProvider.Current.UtcNow.AddYears(1));
+            _cache.Insert(_helper.GetMethodIdentifier(invocation), circuitBreaker, TimeProvider.Current.UtcNow.AddYears(1));
         }
 
         private CircuitBreaker CreateNewCircuitBreaker(IInvocation invocation, CircuitBreakerSettings settings, CircuitBreaker circuitBreaker, Exception ex)
@@ -91,7 +91,7 @@ namespace WiseInterceptors.Interceptors.CircuitBreaker
                     Status = CircuitBreakerStatusEnum.Breakable
                 };
 
-                _Cache.Insert(_helper.GetMethodIdentifier(invocation),
+                _cache.Insert(_helper.GetMethodIdentifier(invocation),
                     circuitBreaker, TimeProvider.Current.UtcNow.AddSeconds(settings.RetryingPeriodInSeconds)
                     );
             }
@@ -112,7 +112,7 @@ namespace WiseInterceptors.Interceptors.CircuitBreaker
         {
             if (circuitBreaker != null)
             {
-                _Cache.Remove(_helper.GetMethodIdentifier(invocation));
+                _cache.Remove(_helper.GetMethodIdentifier(invocation));
             }
         }
 
@@ -132,14 +132,14 @@ namespace WiseInterceptors.Interceptors.CircuitBreaker
         {
             circuitBreaker.Status = CircuitBreakerStatusEnum.Breakable;
             circuitBreaker.Retries -= 1;
-            _Cache.Insert(_helper.GetMethodIdentifier(invocation),
+            _cache.Insert(_helper.GetMethodIdentifier(invocation),
                 circuitBreaker, TimeProvider.Current.UtcNow.AddSeconds(settings.RetryingPeriodInSeconds)
                 );
         }
 
         private CircuitBreaker GetCurrentCircuitBreaker(IInvocation invocation)
         {
-            var circuitBreaker = _Cache.Get(_helper.GetMethodIdentifier(invocation)) as CircuitBreaker;
+            var circuitBreaker = _cache.Get(_helper.GetMethodIdentifier(invocation)) as CircuitBreaker;
             return circuitBreaker;
         }
 

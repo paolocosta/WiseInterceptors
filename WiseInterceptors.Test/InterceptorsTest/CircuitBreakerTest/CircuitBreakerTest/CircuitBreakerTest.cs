@@ -1,15 +1,13 @@
-﻿using Autofac;
-using Autofac.Extras.DynamicProxy2;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
+using Autofac;
+using Autofac.Extras.DynamicProxy2;
+using NSubstitute;
+using NUnit.Framework;
 using WiseInterceptors.Common;
 using WiseInterceptors.Interceptors.CircuitBreaker;
-using NSubstitute;
-using System.Reflection;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreakerTest
 {

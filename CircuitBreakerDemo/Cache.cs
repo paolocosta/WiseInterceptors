@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Reflection;
 using System.Runtime.Caching;
-using System.Text;
-using System.Threading.Tasks;
-using WiseInterceptors;
 using WiseInterceptors.Common;
+using WiseInterceptors.Interceptors.Cache;
 
 namespace CircuitBreakerDemo
 {
@@ -46,13 +43,13 @@ namespace CircuitBreakerDemo
             throw new NotImplementedException();
         }
 
-        public WiseInterceptors.Interceptors.Cache.CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
+        public CacheSettings GetSettings(MethodInfo method, object[] arguments)
         {
             throw new NotImplementedException();
         }
 
 
-        public WiseInterceptors.Interceptors.Cache.FaultToleranceEnum GetFaultToleranceStrategy()
+        public FaultToleranceEnum GetFaultToleranceStrategy()
         {
             throw new NotImplementedException();
         }

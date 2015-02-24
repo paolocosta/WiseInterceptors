@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace WiseInterceptors.Interceptors.Logger
 {
@@ -10,7 +7,7 @@ namespace WiseInterceptors.Interceptors.Logger
     {
         public Exception RaisedException { get; set; }
 
-        public System.Reflection.MethodBase Method { get; set; }
+        public MethodBase Method { get; set; }
 
         public object[] Parameters { get; set; }
 

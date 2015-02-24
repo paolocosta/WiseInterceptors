@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WiseInterceptors;
+using System.Reflection;
 using WiseInterceptors.Common;
+using WiseInterceptors.Interceptors.Cache;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreakerTest
 {
@@ -50,13 +48,13 @@ namespace WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreak
         }
 
 
-        public WiseInterceptors.Interceptors.Cache.CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
+        public CacheSettings GetSettings(MethodInfo method, object[] arguments)
         {
             throw new NotImplementedException();
         }
 
 
-        public Interceptors.Cache.FaultToleranceEnum GetFaultToleranceStrategy()
+        public FaultToleranceEnum GetFaultToleranceStrategy()
         {
             throw new NotImplementedException();
         }

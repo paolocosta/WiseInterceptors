@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Reflection;
 using System.Runtime.Caching;
-using System.Text;
-using System.Threading.Tasks;
 using WiseInterceptors.Common;
+using WiseInterceptors.Interceptors.Cache;
 
 namespace CacheDemo
 {
@@ -46,13 +44,13 @@ namespace CacheDemo
             return null;
         }
 
-        public WiseInterceptors.Interceptors.Cache.CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
+        public CacheSettings GetSettings(MethodInfo method, object[] arguments)
         {
             return Program._Form1.GetCacheSettings();
         }
 
 
-        public WiseInterceptors.Interceptors.Cache.FaultToleranceEnum GetFaultToleranceStrategy()
+        public FaultToleranceEnum GetFaultToleranceStrategy()
         {
             return Program._Form1.GetFaultTolerance();
         }

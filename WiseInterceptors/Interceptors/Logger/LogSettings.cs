@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WiseInterceptors.Interceptors.Logger
+﻿namespace WiseInterceptors.Interceptors.Logger
 {
     public class LogSettings
     {

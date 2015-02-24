@@ -1,12 +1,7 @@
-﻿using Castle.DynamicProxy;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WiseInterceptors.Interceptors.Cache;
-using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
-using WiseInterceptors.Interceptors.Cache.Strategies;
+using Castle.DynamicProxy;
+using Newtonsoft.Json;
 
 namespace WiseInterceptors.Common
 {
@@ -37,7 +32,7 @@ namespace WiseInterceptors.Common
             {
                 return "";
             }
-            return Newtonsoft.Json.JsonConvert.SerializeObject(invocation.Arguments);
+            return JsonConvert.SerializeObject(invocation.Arguments);
         }
 
         public bool IsInvocationMethodReturnTypeVoid(IInvocation invocation)

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
 namespace WiseInterceptors.Interceptors.Logger
 {
@@ -10,6 +6,6 @@ namespace WiseInterceptors.Interceptors.Logger
     {
         void Log(LogInformation logInformation);
 
-        LogSettings GetLogSettings(System.Reflection.MethodInfo methodInfo, object[] p);
+        LogSettings GetLogSettings(MethodInfo methodInfo, object[] p);
     }
 }

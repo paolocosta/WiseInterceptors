@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WiseInterceptors.Interceptors.Cache;
-using NUnit.Framework;
-using WiseInterceptors.Interceptors.Cache.Strategies;
-using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
-using NSubstitute;
-using WiseInterceptors.Common;
 using Castle.DynamicProxy;
 using FluentAssertions;
+using NSubstitute;
+using NUnit.Framework;
+using WiseInterceptors.Common;
+using WiseInterceptors.Interceptors.Cache;
+using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
+using WiseInterceptors.Interceptors.Cache.Strategies;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest
 {

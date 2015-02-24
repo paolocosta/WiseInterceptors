@@ -1,17 +1,14 @@
-﻿using Autofac;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WiseInterceptors.Common;
+﻿using System;
+using System.Reflection;
+using Autofac;
 using FluentAssertions;
+using NSubstitute;
 using NUnit.Framework;
-using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
+using WiseInterceptors.Common;
 using WiseInterceptors.Interceptors.Cache;
+using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
 using WiseInterceptors.Interceptors.CircuitBreaker;
 using WiseInterceptors.Interceptors.MethodValidation;
-using NSubstitute;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
 {
@@ -110,7 +107,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
             throw new NotImplementedException();
         }
 
-        public CacheSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
+        public CacheSettings GetSettings(MethodInfo method, object[] arguments)
         {
             throw new NotImplementedException();
         }

@@ -1,4 +1,7 @@
-﻿namespace CacheDemo
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace CacheDemo
 {
     partial class Form1
     {
@@ -6,7 +9,7 @@
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -237,21 +240,21 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnWriteUctNow;
-        private System.Windows.Forms.GroupBox Settings;
-        private System.Windows.Forms.GroupBox FaultTolerance;
-        private System.Windows.Forms.RadioButton FailFastWithNoRecovery;
-        private System.Windows.Forms.RadioButton ConsiderSoftlyExpiredValuesInCaseOfErrors;
-        private System.Windows.Forms.RadioButton UsePersistentCacheOnlyInCaseOfError;
-        private System.Windows.Forms.RadioButton AlwaysUsePersistentCache;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.NumericUpDown Duration;
-        private System.Windows.Forms.CheckBox UseCache;
-        private System.Windows.Forms.GroupBox Simulation;
-        private System.Windows.Forms.Button StartSimulation;
-        private System.Windows.Forms.Button StopSimulation;
-        private System.Windows.Forms.ListBox Times;
-        private System.Windows.Forms.Button GenerateException;
+        private Button btnWriteUctNow;
+        private GroupBox Settings;
+        private GroupBox FaultTolerance;
+        private RadioButton FailFastWithNoRecovery;
+        private RadioButton ConsiderSoftlyExpiredValuesInCaseOfErrors;
+        private RadioButton UsePersistentCacheOnlyInCaseOfError;
+        private RadioButton AlwaysUsePersistentCache;
+        private Label label1;
+        private NumericUpDown Duration;
+        private CheckBox UseCache;
+        private GroupBox Simulation;
+        private Button StartSimulation;
+        private Button StopSimulation;
+        private ListBox Times;
+        private Button GenerateException;
     }
 }
 

@@ -1,19 +1,8 @@
-﻿using Autofac;
-using Autofac.Extras.DynamicProxy2;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WiseInterceptors.Interceptors.Cache;
-using WiseInterceptors.Test.InterceptorsTest.CircuitBreakerTest.CircuitBreakerTest;
-using FluentAssertions;
-using WiseInterceptors;
+﻿using Castle.DynamicProxy;
 using NSubstitute;
-using Castle.DynamicProxy;
+using NUnit.Framework;
 using WiseInterceptors.Common;
-using System.Reflection;
+using WiseInterceptors.Interceptors.Cache;
 using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CacheTest

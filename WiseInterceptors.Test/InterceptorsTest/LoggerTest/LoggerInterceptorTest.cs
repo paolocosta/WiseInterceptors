@@ -1,14 +1,10 @@
-﻿using Castle.DynamicProxy;
-using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WiseInterceptors.Interceptors.Logger;
-using NUnit.Framework;
+﻿using System;
 using System.Reflection;
 using System.Threading;
+using Castle.DynamicProxy;
+using NSubstitute;
+using NUnit.Framework;
+using WiseInterceptors.Interceptors.Logger;
 
 namespace WiseInterceptors.Test.InterceptorsTest.LoggerTest
 {

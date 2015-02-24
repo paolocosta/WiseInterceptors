@@ -1,12 +1,6 @@
 ﻿using Autofac;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WiseInterceptors.Interceptors.Cache;
 using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
-using WiseInterceptors.Interceptors.Cache.Strategies;
 using WiseInterceptors.Interceptors.CircuitBreaker;
 using WiseInterceptors.Interceptors.MethodValidation;
 

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WiseInterceptors.Interceptors.CircuitBreaker;
 using System.Reflection;
+using System.Threading;
+using WiseInterceptors.Interceptors.CircuitBreaker;
 
 namespace CircuitBreakerDemo
 {
@@ -16,7 +14,7 @@ namespace CircuitBreakerDemo
             DateTime now = DateTime.Now;
             if (now.Second < 30)
             {
-                System.Threading.Thread.Sleep(1000 * 4);
+                Thread.Sleep(1000 * 4);
                 throw new TimeoutException();
             }
             return "ok";
@@ -28,7 +26,7 @@ namespace CircuitBreakerDemo
 
     public class CircuitBreakerSettingsReader : ICircuitBreakerSettingsReader
     {
-        public CircuitBreakerSettings GetSettings(System.Reflection.MethodInfo method, object[] arguments)
+        public CircuitBreakerSettings GetSettings(MethodInfo method, object[] arguments)
         {
             if (method.GetCustomAttributes<CircuitBreakableAttribute>().Any())
             {

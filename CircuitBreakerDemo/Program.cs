@@ -1,13 +1,9 @@
-﻿using Autofac;
-using Castle.DynamicProxy;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WiseInterceptors.Interceptors.CircuitBreaker;
+﻿using System;
+using System.Threading;
+using Autofac;
 using Autofac.Extras.DynamicProxy2;
 using WiseInterceptors.Common;
+using WiseInterceptors.Interceptors.CircuitBreaker;
 
 namespace CircuitBreakerDemo
 {
@@ -25,7 +21,7 @@ namespace CircuitBreakerDemo
                     var b = scope.Resolve<Breakable>();
                     try
                     {
-                        System.Threading.Thread.Sleep(1000);
+                        Thread.Sleep(1000);
                         b.HopeGetSomething();
                         Console.WriteLine(string.Format("{0} OK", DateTime.Now.TimeOfDay.ToString()));
                     }

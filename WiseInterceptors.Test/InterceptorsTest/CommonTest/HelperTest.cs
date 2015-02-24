@@ -1,15 +1,10 @@
-﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NSubstitute;
+﻿using System;
+using System.IO;
 using Castle.DynamicProxy;
 using FluentAssertions;
+using NSubstitute;
+using NUnit.Framework;
 using WiseInterceptors.Common;
-using WiseInterceptors.Interceptors.Cache;
-using WiseInterceptors.Interceptors.Cache.Strategies;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
 {
@@ -53,7 +48,7 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
         [Test]
         public void should_GetDefaultValue_return_null_for_a_reference_type()
         {
-            _helper.GetDefaultValue(typeof(System.IO.MemoryStream)).Should().Be(null);
+            _helper.GetDefaultValue(typeof(MemoryStream)).Should().Be(null);
         }
     }
 }

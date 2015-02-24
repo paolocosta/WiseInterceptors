@@ -1,11 +1,8 @@
-﻿using Autofac;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows.Forms;
-using WiseInterceptors.Common;
+using Autofac;
 using Autofac.Extras.DynamicProxy2;
+using WiseInterceptors.Common;
 using WiseInterceptors.Interceptors.Cache;
 
 namespace CacheDemo

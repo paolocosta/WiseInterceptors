@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WiseInterceptors.Common
 {
@@ -13,10 +9,10 @@ namespace WiseInterceptors.Common
 
         public static TimeProvider Current
         {
-            get { return TimeProvider.current; }
+            get { return current; }
             set
             {
-                TimeProvider.current = value;
+                current = value;
             }
         }
 
@@ -42,7 +38,7 @@ namespace WiseInterceptors.Common
 
         public static DefaultTimeProvider Instance
         {
-            get { return DefaultTimeProvider.instance; }
+            get { return instance; }
         }
     }
 }

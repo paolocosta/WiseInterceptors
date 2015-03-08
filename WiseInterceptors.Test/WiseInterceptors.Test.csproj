@@ -77,7 +77,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InterceptorsTest\CacheTest\CacheInterceptorTest.cs" />
-    <Compile Include="InterceptorsTest\CacheTest\CacheInvocationStrategySelectorTest.cs" />
     <Compile Include="InterceptorsTest\CacheTest\CacheInvocationManagerTest.cs" />
     <Compile Include="InterceptorsTest\CircuitBreakerTest\CircuitBreakerTest\Cache.cs" />
     <Compile Include="InterceptorsTest\CircuitBreakerTest\CircuitBreakerTest\CircuitBreakerTest.cs" />

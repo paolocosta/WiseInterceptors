@@ -9,6 +9,7 @@ using WiseInterceptors.Interceptors.Cache;
 using WiseInterceptors.Interceptors.Cache.CacheInvocationMethod;
 using WiseInterceptors.Interceptors.CircuitBreaker;
 using WiseInterceptors.Interceptors.MethodValidation;
+using WiseInterceptors.Interceptors.Cache.Strategies;
 
 namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
 {
@@ -63,6 +64,25 @@ namespace WiseInterceptors.Test.InterceptorsTest.CommonTest
             var scope = container.BeginLifetimeScope();
             var helper = scope.Resolve<CircuitBreakerInterceptor>();
             helper.GetType().Should().Be(typeof(CircuitBreakerInterceptor));
+        }
+
+        [Test]
+        [TestCase(FaultToleranceEnum.AlwaysUsePersistentCache, typeof(AlwaysUsePersistentCacheInvocationManager))]
+        [TestCase(FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors, typeof(ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager))]
+        [TestCase(FaultToleranceEnum.FailFastWithNoRecovery, typeof(FailFastCacheInvocationManager))]
+        [TestCase(FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError, typeof(UsePersistentCacheOnlyInCaseOfErrorInvocationManager))]
+        public void should_resolve_ICacheInvocationStrategySelector(FaultToleranceEnum faultTolerance, Type expected)
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterModule<InterceptorModule>();
+            var cache = Substitute.For<ICache>();
+            builder.Register(c=> cache).As<ICache>();
+            cache.GetFaultToleranceStrategy().Returns(faultTolerance);
+            var container = builder.Build();
+            var scope = container.BeginLifetimeScope();
+            
+            var sut = scope.Resolve<ICacheInvocationStrategySelector>();
+            sut.GetCacheManagerImplementation().Should().BeOfType(expected);
         }
 
         [Test]

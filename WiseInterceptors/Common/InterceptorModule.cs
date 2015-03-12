@@ -12,16 +12,16 @@ namespace WiseInterceptors.Common
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<Helper>().As<IHelper>().InstancePerLifetimeScope();
-            builder.RegisterType<CacheInvocationStrategySelector>().As<ICacheInvocationStrategySelector>().InstancePerLifetimeScope();
-            builder.RegisterType<CacheInterceptor>().InstancePerLifetimeScope();
-            builder.RegisterType<CircuitBreakerInterceptor>().InstancePerLifetimeScope();
-            builder.RegisterType<MethodValidationInterceptor>().InstancePerLifetimeScope();
+            builder.RegisterType<Helper>().As<IHelper>().SingleInstance();
+            builder.RegisterType<CacheInvocationStrategySelector>().As<ICacheInvocationStrategySelector>().SingleInstance();
+            builder.RegisterType<CacheInterceptor>().SingleInstance();
+            builder.RegisterType<CircuitBreakerInterceptor>().SingleInstance();
+            builder.RegisterType<MethodValidationInterceptor>().SingleInstance();
 
-            builder.RegisterType<AlwaysUsePersistentCacheInvocationManager>().Keyed<CacheInvocationManager>(FaultToleranceEnum.AlwaysUsePersistentCache).InstancePerLifetimeScope();
-            builder.RegisterType<ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager>().Keyed<CacheInvocationManager>(FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors).InstancePerLifetimeScope();
-            builder.RegisterType<FailFastCacheInvocationManager>().Keyed<CacheInvocationManager>(FaultToleranceEnum.FailFastWithNoRecovery).InstancePerLifetimeScope();
-            builder.RegisterType<UsePersistentCacheOnlyInCaseOfErrorInvocationManager>().Keyed<CacheInvocationManager>(FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError).InstancePerLifetimeScope();
+            builder.RegisterType<AlwaysUsePersistentCacheInvocationManager>().Keyed<CacheInvocationManager>(FaultToleranceEnum.AlwaysUsePersistentCache).SingleInstance();
+            builder.RegisterType<ConsiderSoftlyExpiredValuesInCaseOfErrorsInvocationManager>().Keyed<CacheInvocationManager>(FaultToleranceEnum.ConsiderSoftlyExpiredValuesInCaseOfErrors).SingleInstance();
+            builder.RegisterType<FailFastCacheInvocationManager>().Keyed<CacheInvocationManager>(FaultToleranceEnum.FailFastWithNoRecovery).SingleInstance();
+            builder.RegisterType<UsePersistentCacheOnlyInCaseOfErrorInvocationManager>().Keyed<CacheInvocationManager>(FaultToleranceEnum.UsePersistentCacheOnlyInCaseOfError).SingleInstance();
             builder.Register<Func<FaultToleranceEnum, CacheInvocationManager>>(c => {
                 {
                     var ctx = c.Resolve<IComponentContext>();

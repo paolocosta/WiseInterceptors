@@ -16,7 +16,6 @@ namespace WiseInterceptors.Interceptors.Cache.CacheInvocationMethod
         readonly IHelper _helper;
         readonly Func<FaultToleranceEnum, CacheInvocationManager> _cacheInvocationManagerFactory;
 
-
         public CacheInvocationStrategySelector(
             ICache cache, 
             IHelper helper,

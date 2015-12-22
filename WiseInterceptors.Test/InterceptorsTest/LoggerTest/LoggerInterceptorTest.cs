@@ -105,9 +105,9 @@ namespace WiseInterceptors.Test.InterceptorsTest.LoggerTest
             _logger.GetLogSettings(Arg.Any<MethodInfo>(), Arg.Any<object[]>()).Returns(
                 new LogSettings { Logcall = true, LogException = throwException });
             if(throwException)
-                _invocation.When(x => x.Proceed()).Do(x => {Thread.Sleep(1);  throw new ApplicationException(); });
+                _invocation.When(x => x.Proceed()).Do(x => {Thread.Sleep(5);  throw new ApplicationException(); });
             else
-                _invocation.When(x => x.Proceed()).Do(x => { Thread.Sleep(1); });
+                _invocation.When(x => x.Proceed()).Do(x => { Thread.Sleep(5); });
             try
             {
                 _sut.Intercept(_invocation);
